@@ -18,14 +18,18 @@ export class AuthService {
     const user = await this.userService.findOneByEmail({
       email: signInDto.email,
     });
-    if (!user) {
+    if (!user || !signInDto.password) {
       throw new UnauthorizedException();
     }
     const isMatch = await bcrypt.compare(signInDto.password, user.password);
     if (!isMatch) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, email: user.email };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      panierId: user.panier.id,
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -33,8 +37,8 @@ export class AuthService {
 
   async register(registerDto: CreateUserDto) {
     const user = await this.userService.createUser(registerDto);
-    const payload = { sub: user.id, email: user.email };
-    await this.panierService.createPanier(user.id);
+    const panier = await this.panierService.createPanier(user.id);
+    const payload = { sub: user.id, email: user.email, panierId: panier.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

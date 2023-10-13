@@ -58,6 +58,12 @@ export class UserService {
             name: true,
           },
         },
+        panier: {
+          select: {
+            id: true,
+          },
+        },
+        password: true,
         createdAt: true,
         updatedAt: true,
       },

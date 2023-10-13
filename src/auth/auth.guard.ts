@@ -1,31 +1,35 @@
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    try {
-      const request = context.switchToHttp().getRequest();
-      const { authorization }: any = request.headers;
-      if (!authorization || authorization.trim() === '') {
-        throw new UnauthorizedException('Please provide token');
-      }
-      const authToken = authorization.replace(/bearer/gim, '').trim();
-      const resp = await this.authService.validateToken(authToken);
-      request.decodedData = resp;
-      return true;
-    } catch (error) {
-      throw new ForbiddenException(
-        error.message || 'session expired! Please sign In',
-      );
+    const request = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(request);
+    if (!token) {
+      throw new UnauthorizedException();
     }
+    try {
+      const payload = await this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      request['user'] = payload;
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
+    return true;
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

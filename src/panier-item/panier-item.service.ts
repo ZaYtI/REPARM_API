@@ -7,20 +7,15 @@ export class PanierItemService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async addProductToPanier(addProductDto: AddProductDto): Promise<any | null> {
-    return this.prismaService.panierProduit.create({
+    const { produitId, quantity, panierId } = addProductDto;
+    const panierProduit = await this.prismaService.panierProduit.create({
       data: {
-        produit: {
-          connect: {
-            id: addProductDto.produitId,
-          },
-        },
-        quantity: addProductDto.quantity,
-        panier: {
-          connect: {
-            id: addProductDto.panierId,
-          },
-        },
+        produitId,
+        quantity,
+        panierId,
       },
     });
+
+    return panierProduit;
   }
 }
