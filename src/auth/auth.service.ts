@@ -27,7 +27,9 @@ export class AuthService {
   }
 
   async validateToken(token: string) {
-    const payload = this.jwtService.verify(token);
+    const payload = this.jwtService.verify(token, {
+      secret: process.env.JWT_SECRET,
+    });
     const user = await this.userService.findOneByEmail({
       email: payload.email,
     });
