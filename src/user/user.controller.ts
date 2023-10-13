@@ -10,16 +10,12 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { response } from 'express';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly prismaService: PrismaService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get(':id')
   async getUserById(@Param('id') id: string) {
@@ -40,17 +36,7 @@ export class UserController {
   async createUser(
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
   ): Promise<User> {
-    const { name, email, password } = createUserDto;
-    const role = { connect: { id: 1 } };
-    const user = await this.prismaService.user.create({
-      data: {
-        name,
-        email,
-        password,
-        role,
-      },
-    });
-    return user;
+    return this.userService.createUser(createUserDto);
   }
 
   @Get(':id/panier')
