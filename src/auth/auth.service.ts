@@ -4,12 +4,14 @@ import { UserService } from 'src/user/user.service';
 import { LoginDto } from 'src/dto/login.dto';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { PanierService } from 'src/panier/panier.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private panierService: PanierService,
   ) {}
 
   async login(signInDto: LoginDto) {
@@ -32,6 +34,7 @@ export class AuthService {
   async register(registerDto: CreateUserDto) {
     const user = await this.userService.createUser(registerDto);
     const payload = { sub: user.id, email: user.email };
+    await this.panierService.createPanier(user.id);
     return {
       access_token: this.jwtService.sign(payload),
     };

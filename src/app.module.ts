@@ -8,9 +8,14 @@ import { APP_PIPE } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { PanierItemController } from './panier-item/panier-item.controller';
+import { PanierItemService } from './panier-item/panier-item.service';
+import { PanierItemModule } from './panier-item/panier-item.module';
+import { PanierService } from './panier/panier.service';
+import { PanierModule } from './panier/panier.module';
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule],
-  controllers: [AppController, UserController],
+  imports: [PrismaModule, UserModule, AuthModule, PanierItemModule, PanierModule],
+  controllers: [AppController, UserController, PanierItemController],
   providers: [
     AppService,
     PrismaService,
@@ -19,6 +24,8 @@ import { AuthModule } from './auth/auth.module';
       provide: APP_PIPE,
       useClass: ValidationPipe,
     },
+    PanierItemService,
+    PanierService,
   ],
 })
 export class AppModule {}

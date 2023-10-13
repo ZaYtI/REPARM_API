@@ -38,14 +38,4 @@ export class UserController {
   ): Promise<User> {
     return this.userService.createUser(createUserDto);
   }
-
-  @Get(':id/panier')
-  async getPanier(@Param('id') id: string) {
-    return this.userService.getUserPanier(Number(id));
-  }
-
-  @Get(':id/panier_items')
-  async getPanierItems(@Param('id') id: string) {
-    return this.userService.getUserPanierItems(Number(id));
-  }
 }
