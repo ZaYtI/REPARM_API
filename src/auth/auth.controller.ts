@@ -1,11 +1,25 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Request,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from 'src/dto/login.dto';
 import { CreateUserDto } from 'src/dto/create-user.dto';
+import { UserService } from 'src/user/user.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -17,5 +31,12 @@ export class AuthController {
   @Post('register')
   async register(@Body() registerDto: CreateUserDto) {
     return this.authService.register(registerDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('profile')
+  @UseGuards(AuthGuard)
+  async profile(@Request() req: any) {
+    return await this.userService.findOneByEmail({ email: req.body.email });
   }
 }
