@@ -18,4 +18,34 @@ export class PanierItemService {
 
     return panierProduit;
   }
+
+  async getAllProductsFromPanier(panierId: number): Promise<any[] | null> {
+    const panierProduits = await this.prismaService.panierProduit.findMany({
+      where: {
+        panierId,
+      },
+      include: {
+        produit: true,
+      },
+    });
+
+    const productsDict: { [key: number]: any } = {};
+
+    for (const panierProduit of panierProduits) {
+      const { produit, quantity } = panierProduit;
+
+      if (!productsDict[produit.id]) {
+        productsDict[produit.id] = {
+          ...produit,
+          quantity,
+        };
+      } else {
+        productsDict[produit.id].quantity += quantity;
+      }
+    }
+
+    const distinctProducts = Object.values(productsDict);
+
+    return distinctProducts;
+  }
 }
