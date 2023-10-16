@@ -6,13 +6,11 @@ import {
   HttpStatus,
   Request,
   Get,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from 'src/dto/login.dto';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
-import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -35,7 +33,6 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Get('profile')
-  @UseGuards(AuthGuard)
   async profile(@Request() req: any) {
     return await this.userService.findOneByEmail({ email: req.body.email });
   }

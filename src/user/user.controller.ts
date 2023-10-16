@@ -4,13 +4,11 @@ import {
   Get,
   Param,
   Post,
-  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '@prisma/client';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { response } from 'express';
 
 @Controller('user')
@@ -22,7 +20,6 @@ export class UserController {
     return this.userService.findOne({ id: Number(id) });
   }
 
-  @UseGuards(AuthGuard)
   @Get()
   async getAllUsers() {
     try {

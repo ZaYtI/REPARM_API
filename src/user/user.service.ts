@@ -121,16 +121,4 @@ export class UserService {
     }
     return panier;
   }
-
-  async getUserPanierItems(userId: number): Promise<any> {
-    const panier = await this.getUserPanier(userId);
-    return this.prismaService.panierProduit.findMany({
-      where: {
-        panierId: panier.id,
-      },
-      include: {
-        produit: true,
-      },
-    });
-  }
 }

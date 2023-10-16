@@ -1,4 +1,9 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
@@ -13,8 +18,15 @@ import { PanierItemService } from './panier-item/panier-item.service';
 import { PanierItemModule } from './panier-item/panier-item.module';
 import { PanierService } from './panier/panier.service';
 import { PanierModule } from './panier/panier.module';
+import { AuthMiddleware } from './auth/auth.middleware';
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule, PanierItemModule, PanierModule],
+  imports: [
+    PrismaModule,
+    UserModule,
+    AuthModule,
+    PanierItemModule,
+    PanierModule,
+  ],
   controllers: [AppController, UserController, PanierItemController],
   providers: [
     AppService,
@@ -28,4 +40,10 @@ import { PanierModule } from './panier/panier.module';
     PanierService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes(PanierItemController, UserController);
+  }
+}

@@ -1,25 +1,12 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Request } from '@nestjs/common';
 import { PanierItemService } from './panier-item.service';
 import { RequestAddProductDto } from 'src/dto/request-add-product.dto';
-import { UserService } from 'src/user/user.service';
-import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('panier-item')
 export class PanierItemController {
-  constructor(
-    private readonly panierItemService: PanierItemService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly panierItemService: PanierItemService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   async addProductToPanier(
     @Body() { produitId, quantity }: RequestAddProductDto,
     @Request() req: any,
@@ -32,7 +19,6 @@ export class PanierItemController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   async getAllProductsFromPanier(@Request() req: any): Promise<any> {
     return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
   }

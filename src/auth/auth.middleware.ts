@@ -1,19 +1,18 @@
+// auth.middleware.ts
 import {
-  CanActivate,
-  ExecutionContext,
   Injectable,
+  NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthMiddleware implements NestMiddleware {
   constructor(private jwtService: JwtService) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+  async use(req: Request, res: Response, next: NextFunction) {
+    const token = this.extractTokenFromHeader(req);
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -21,11 +20,11 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
       });
-      request['user'] = payload;
+      req['user'] = payload;
+      next();
     } catch (error) {
       throw new UnauthorizedException();
     }
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
