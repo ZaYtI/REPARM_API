@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Request,
+  Put,
+} from '@nestjs/common';
 import { PanierItemService } from './panier-item.service';
 import { RequestAddProductDto } from 'src/dto/request-add-product.dto';
 
@@ -33,6 +41,47 @@ export class PanierItemController {
   async deleteProductToPanier(@Body() produit: any, @Request() req: any) {
     const produitId = produit.produitId;
     await this.panierItemService.deleteProductToPanier(
+      produitId,
+      req.user.panierId,
+    );
+    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
+  }
+
+  @Put()
+  async updateProductQuantity(
+    @Body() produit: any,
+    @Request() req: any,
+  ): Promise<any> {
+    const produitId = produit.produitId;
+    const quantity = produit.quantity;
+    await this.panierItemService.updateProductQuantity(
+      produitId,
+      req.user.panierId,
+      quantity,
+    );
+    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
+  }
+
+  @Post('increment')
+  async incrementProductQuantity(
+    @Body() produit: any,
+    @Request() req: any,
+  ): Promise<any> {
+    const produitId = produit.produitId;
+    await this.panierItemService.incrementProductQuantity(
+      produitId,
+      req.user.panierId,
+    );
+    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
+  }
+
+  @Post('decrement')
+  async decrementProductQuantity(
+    @Body() produit: any,
+    @Request() req: any,
+  ): Promise<any> {
+    const produitId = produit.produitId;
+    await this.panierItemService.decrementProductQuantity(
       produitId,
       req.user.panierId,
     );

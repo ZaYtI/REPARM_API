@@ -78,4 +78,57 @@ export class PanierItemService {
 
     return price;
   }
+
+  async updateProductQuantity(
+    produitId: number,
+    panierId: number,
+    quantity: number,
+  ): Promise<any> {
+    const panierProduit = await this.prismaService.panierProduit.updateMany({
+      where: {
+        produitId,
+        panierId,
+      },
+      data: {
+        quantity,
+      },
+    });
+    return panierProduit;
+  }
+
+  async incrementProductQuantity(
+    produitId: number,
+    panierId: number,
+  ): Promise<any> {
+    const panierProduit = await this.prismaService.panierProduit.updateMany({
+      where: {
+        produitId,
+        panierId,
+      },
+      data: {
+        quantity: {
+          increment: 1,
+        },
+      },
+    });
+    return panierProduit;
+  }
+
+  async decrementProductQuantity(
+    produitId: number,
+    panierId: number,
+  ): Promise<any> {
+    const panierProduit = await this.prismaService.panierProduit.updateMany({
+      where: {
+        produitId,
+        panierId,
+      },
+      data: {
+        quantity: {
+          decrement: 1,
+        },
+      },
+    });
+    return panierProduit;
+  }
 }
