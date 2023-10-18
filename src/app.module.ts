@@ -19,6 +19,7 @@ import { PanierItemModule } from './panier-item/panier-item.module';
 import { PanierService } from './panier/panier.service';
 import { PanierModule } from './panier/panier.module';
 import { AuthMiddleware } from './auth/auth.middleware';
+import { ProductModule } from './product/product.module';
 @Module({
   imports: [
     PrismaModule,
@@ -26,6 +27,7 @@ import { AuthMiddleware } from './auth/auth.middleware';
     AuthModule,
     PanierItemModule,
     PanierModule,
+    ProductModule,
   ],
   controllers: [AppController, UserController, PanierItemController],
   providers: [
