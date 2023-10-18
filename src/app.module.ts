@@ -20,6 +20,7 @@ import { PanierService } from './panier/panier.service';
 import { PanierModule } from './panier/panier.module';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { ProductModule } from './product/product.module';
+import { ProductController } from './product/product.controller';
 @Module({
   imports: [
     PrismaModule,
@@ -46,6 +47,13 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes(PanierItemController, UserController);
+      .exclude(
+        'auth/login',
+        'auth/register',
+        'auth/refresh',
+        'product',
+        'product/:id',
+      )
+      .forRoutes(PanierItemController, UserController, ProductController);
   }
 }

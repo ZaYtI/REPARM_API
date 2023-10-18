@@ -29,6 +29,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       panierId: user.panier.id,
+      role: user.role.name,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -38,7 +39,11 @@ export class AuthService {
   async register(registerDto: CreateUserDto) {
     const user = await this.userService.createUser(registerDto);
     const panier = await this.panierService.createPanier(user.id);
-    const payload = { sub: user.id, email: user.email, panierId: panier.id };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      panierId: panier.id,
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };
