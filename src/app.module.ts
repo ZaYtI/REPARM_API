@@ -20,8 +20,9 @@ import { PanierService } from './panier/panier.service';
 import { PanierModule } from './panier/panier.module';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { ProductModule } from './product/product.module';
-import { ProductController } from './product/product.controller';
 import { AuthController } from './auth/auth.controller';
+import { CronService } from './cron/cron.service';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     PrismaModule,
@@ -30,6 +31,7 @@ import { AuthController } from './auth/auth.controller';
     PanierItemModule,
     PanierModule,
     ProductModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController, UserController, PanierItemController],
   providers: [
@@ -42,6 +44,7 @@ import { AuthController } from './auth/auth.controller';
     },
     PanierItemService,
     PanierService,
+    CronService,
   ],
 })
 export class AppModule implements NestModule {

@@ -10,6 +10,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class AuthService {
   private salt: Promise<string>;
+  private jwtTimeExp = 300000;
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
@@ -54,6 +55,7 @@ export class AuthService {
           },
         },
         token: cryptedJwtToken,
+        ExpirationToken: Date.now() + this.jwtTimeExp,
       },
     });
     return {
@@ -79,6 +81,7 @@ export class AuthService {
           },
         },
         token: cryptedJwtToken,
+        ExpirationToken: Date.now() + this.jwtTimeExp,
       },
     });
     return {
@@ -100,7 +103,9 @@ export class AuthService {
   }
 
   async logout(id: number, token: string) {
+    console.log(token);
     const decryptedToken = await bcrypt.hash(token, await this.salt);
+    console.log(decryptedToken);
     await this.prismaService.auth.delete({
       where: {
         userId: id,
@@ -108,5 +113,30 @@ export class AuthService {
       },
     });
     return { message: 'your logged out' };
+  }
+
+  async verifyToken(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      return decoded;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async deleteExpiredRefreshTokens() {
+    const auths = await this.prismaService.auth.findMany();
+    const now = Date.now();
+    for (const auth of auths) {
+      if (auth.ExpirationToken <= now) {
+        await this.prismaService.auth.delete({
+          where: {
+            userId: auth.userId,
+          },
+        });
+      }
+    }
   }
 }
