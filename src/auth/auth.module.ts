@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { PanierModule } from 'src/panier/panier.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PanierModule } from 'src/panier/panier.module';
       signOptions: { expiresIn: '5m' },
     }),
     PanierModule,
+    PrismaModule,
   ],
   providers: [AuthService],
   controllers: [AuthController],

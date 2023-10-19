@@ -27,6 +27,7 @@ model User {
   updatedAt DateTime  @updatedAt
   panier    Panier?   @relation("user_panier")
   role      Role      @relation(fields: [roleId], references: [id])
+  auth      Auth?
 }
 
 model Categorie {
@@ -64,4 +65,11 @@ model Produit {
   updatedAt   DateTime     @updatedAt
   categorie   Categorie    @relation(fields: [categorieId], references: [id])
   paniers     PanierProduit[]
+}
+
+model Auth {
+  id        Int     @id @default(autoincrement())
+  token String
+  userId Int   @unique
+  user  User @relation(fields: [userId], references: [id])
 }

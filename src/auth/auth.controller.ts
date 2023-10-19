@@ -36,4 +36,15 @@ export class AuthController {
   async profile(@Request() req: any) {
     return await this.userService.findOneByEmail({ email: req.body.email });
   }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('logout')
+  async logout(@Request() req: any) {
+    const user = await this.userService.findOneByEmail({
+      email: req.user.email,
+    });
+    const token = req.headers.authorization.split(' ')[1];
+
+    return this.authService.logout(user.id, token);
+  }
 }

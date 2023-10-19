@@ -21,6 +21,7 @@ import { PanierModule } from './panier/panier.module';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { ProductModule } from './product/product.module';
 import { ProductController } from './product/product.controller';
+import { AuthController } from './auth/auth.controller';
 @Module({
   imports: [
     PrismaModule,
@@ -53,7 +54,9 @@ export class AppModule implements NestModule {
         'auth/refresh',
         'product',
         'product/:id',
+        'auth/login',
+        'auth/register',
       )
-      .forRoutes(PanierItemController, UserController, ProductController);
+      .forRoutes(PanierItemController, UserController, AuthController);
   }
 }
