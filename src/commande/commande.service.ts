@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CommandeInterface } from './interface/commande.interface';
 
 @Injectable()
 export class CommandeService {
@@ -17,12 +18,19 @@ export class CommandeService {
     });
   }
 
-  async getCommandeById(commandeId: number): Promise<any | null> {
-    return this.prismaService.commande.findUnique({
+  async getCommandeById(commandeId: number): Promise<CommandeInterface> {
+    const commande = await this.prismaService.commande.findUnique({
       where: {
         id: commandeId,
       },
     });
+    return {
+      id: commande.id,
+      userId: commande.userId,
+      isValidate: commande.IsValidate,
+      createdAt: commande.createdAt,
+      updatedAt: commande.updatedAt,
+    };
   }
 
   async deleteCommande(commandeId: number): Promise<any | null> {
@@ -33,14 +41,21 @@ export class CommandeService {
     });
   }
 
-  async getCommandeByUserId(userId: number): Promise<any | null> {
-    return this.prismaService.commande.findMany({
+  async getCommandeByUserId(userId: number): Promise<CommandeInterface[]> {
+    const commandes = await this.prismaService.commande.findMany({
       where: {
         user: {
           id: userId,
         },
       },
     });
+    return commandes.map((commande) => ({
+      id: commande.id,
+      userId: commande.userId,
+      isValidate: commande.IsValidate,
+      createdAt: commande.createdAt,
+      updatedAt: commande.updatedAt,
+    }));
   }
 
   async updateValidationCommande(
