@@ -105,7 +105,6 @@ export class AuthService {
   async logout(id: number, token: string) {
     console.log(token);
     const decryptedToken = await bcrypt.hash(token, await this.salt);
-    console.log(decryptedToken);
     await this.prismaService.auth.delete({
       where: {
         userId: id,

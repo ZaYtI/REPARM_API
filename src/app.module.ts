@@ -23,6 +23,8 @@ import { ProductModule } from './product/product.module';
 import { AuthController } from './auth/auth.controller';
 import { CronService } from './cron/cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CommandeModule } from './commande/commande.module';
+import { CommandeProduitModule } from './commande-produit/commande-produit.module';
 @Module({
   imports: [
     PrismaModule,
@@ -32,6 +34,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     PanierModule,
     ProductModule,
     ScheduleModule.forRoot(),
+    CommandeModule,
+    CommandeProduitModule,
   ],
   controllers: [AppController, UserController, PanierItemController],
   providers: [

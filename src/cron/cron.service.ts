@@ -6,7 +6,7 @@ import { AuthService } from 'src/auth/auth.service';
 export class CronService {
   constructor(private readonly authService: AuthService) {}
 
-  @Cron('0 */1 * * * *')
+  @Cron('0 */10 * * * *')
   async handleCron() {
     console.log('Cron job started');
     await this.authService.deleteExpiredRefreshTokens();
