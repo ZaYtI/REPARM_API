@@ -6,6 +6,7 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { PanierModule } from 'src/panier/panier.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { BlackListModule } from 'src/black-list/black-list.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
     }),
     PanierModule,
     PrismaModule,
+    BlackListModule,
   ],
   providers: [AuthService],
   controllers: [AuthController],

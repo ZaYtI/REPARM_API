@@ -86,6 +86,15 @@ CREATE TABLE "CommandeProduit" (
     CONSTRAINT "CommandeProduit_produitId_fkey" FOREIGN KEY ("produitId") REFERENCES "Produit" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "BlackList" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "token" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "ExpirationToken" BIGINT NOT NULL,
+    CONSTRAINT "BlackList_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 

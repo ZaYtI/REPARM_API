@@ -25,6 +25,9 @@ import { CronService } from './cron/cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CommandeModule } from './commande/commande.module';
 import { CommandeProduitModule } from './commande-produit/commande-produit.module';
+import { CommandeController } from './commande/commande.controller';
+import { BlackListService } from './black-list/black-list.service';
+import { BlackListModule } from './black-list/black-list.module';
 @Module({
   imports: [
     PrismaModule,
@@ -36,6 +39,7 @@ import { CommandeProduitModule } from './commande-produit/commande-produit.modul
     ScheduleModule.forRoot(),
     CommandeModule,
     CommandeProduitModule,
+    BlackListModule,
   ],
   controllers: [AppController, UserController, PanierItemController],
   providers: [
@@ -49,6 +53,7 @@ import { CommandeProduitModule } from './commande-produit/commande-produit.modul
     PanierItemService,
     PanierService,
     CronService,
+    BlackListService,
   ],
 })
 export class AppModule implements NestModule {
@@ -64,6 +69,11 @@ export class AppModule implements NestModule {
         'auth/login',
         'auth/register',
       )
-      .forRoutes(PanierItemController, UserController, AuthController);
+      .forRoutes(
+        PanierItemController,
+        UserController,
+        AuthController,
+        CommandeController,
+      );
   }
 }

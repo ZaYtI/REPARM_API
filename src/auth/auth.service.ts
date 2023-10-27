@@ -6,6 +6,7 @@ import { CreateUserDto } from 'src/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { PanierService } from 'src/panier/panier.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { BlackListService } from 'src/black-list/black-list.service';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
     private jwtService: JwtService,
     private panierService: PanierService,
     private prismaService: PrismaService,
+    private blackListService: BlackListService,
   ) {
     this.salt = bcrypt.genSalt();
   }
@@ -30,7 +32,16 @@ export class AuthService {
       },
     });
     if (auth) {
-      throw new UnauthorizedException('User already logged in');
+      await this.blackListService.addTokenWithUserAndDate(
+        auth.token,
+        user.id,
+        auth.ExpirationToken,
+      );
+      await this.prismaService.auth.delete({
+        where: {
+          userId: user.id,
+        },
+      });
     }
     if (!user || !signInDto.password) {
       throw new UnauthorizedException();

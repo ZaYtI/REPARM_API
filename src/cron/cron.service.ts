@@ -8,8 +8,6 @@ export class CronService {
 
   @Cron('0 */10 * * * *')
   async handleCron() {
-    console.log('Cron job started');
     await this.authService.deleteExpiredRefreshTokens();
-    console.log('Cron job finished');
   }
 }

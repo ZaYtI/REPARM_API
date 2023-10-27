@@ -6,14 +6,22 @@ import {
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { BlackListService } from 'src/black-list/black-list.service';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly blackListService: BlackListService,
+  ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     const token = this.extractTokenFromHeader(req);
     if (!token) {
+      throw new UnauthorizedException();
+    }
+    const isBlackListed = await this.blackListService.findToken(token);
+    if (isBlackListed) {
       throw new UnauthorizedException();
     }
     try {

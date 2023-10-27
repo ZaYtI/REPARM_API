@@ -16,6 +16,11 @@ export class CommandeProduitService {
           id: id_commande,
         },
       },
+      select: {
+        produit: true,
+        quantity: true,
+        commandeId: true,
+      },
     });
   }
 
@@ -34,5 +39,15 @@ export class CommandeProduitService {
         },
       });
     }
+  }
+
+  async getCommandeProduitFromUserId(id_user: number) {
+    return this.prismaService.commandeProduit.findMany({
+      where: {
+        commande: {
+          userId: id_user,
+        },
+      },
+    });
   }
 }
