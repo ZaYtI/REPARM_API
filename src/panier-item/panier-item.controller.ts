@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { PanierItemService } from './panier-item.service';
-import { RequestAddProductDto } from 'src/dto/request-add-product.dto';
+import { RequestAddProductDto } from 'src/panier-item/dto/request-add-product.dto';
 
 @Controller('panier-item')
 export class PanierItemController {
@@ -16,12 +16,12 @@ export class PanierItemController {
 
   @Post()
   async addProductToPanier(
-    @Body() { produitId, quantity }: RequestAddProductDto,
+    @Body() requestAddProduct: RequestAddProductDto,
     @Request() req: any,
   ): Promise<any> {
+    const { ...data } = requestAddProduct;
     await this.panierItemService.addProductToPanier({
-      produitId,
-      quantity,
+      ...data,
       panierId: req.user.panierId,
     });
     return this.panierItemService.getAllProductsFromPanier(req.user.panierId);

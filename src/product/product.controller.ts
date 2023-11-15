@@ -4,11 +4,11 @@ import {
   Delete,
   Get,
   Param,
-  // Post,
+  Post,
   Put,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { newProductDto } from 'src/dto/new-product.dto';
+import { NewProductDto } from './dto/new-product.dto';
 
 @Controller('product')
 export class ProductController {
@@ -24,15 +24,15 @@ export class ProductController {
     return this.productService.getAllProducts();
   }
 
-  // @Post()
-  // async createProduct(@Body() newproductdto: newProductDto) {
-  //   return this.productService.createProduct(newproductdto);
-  // }
+  @Post('/create')
+  async createProduct(@Body() newproductdto: NewProductDto) {
+    return this.productService.createProduct(newproductdto);
+  }
 
   @Put(':id')
   async updateProduct(
     @Param('id') id: number,
-    @Body() newproductdto: newProductDto,
+    @Body() newproductdto: NewProductDto,
   ) {
     return this.productService.updateProduct(id, newproductdto);
   }
