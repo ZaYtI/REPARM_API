@@ -8,8 +8,8 @@ import {
   Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from 'src/dto/login.dto';
-import { CreateUserDto } from 'src/dto/create-user.dto';
+import { LoginDto } from 'src/auth/dto/login.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
 
 @Controller('auth')

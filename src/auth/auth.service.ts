@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { LoginDto } from 'src/dto/login.dto';
-import { CreateUserDto } from 'src/dto/create-user.dto';
+import { LoginDto } from 'src/auth/dto/login.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { PanierService } from 'src/panier/panier.service';
 import { PrismaService } from 'src/prisma/prisma.service';

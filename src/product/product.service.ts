@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { newProductDto } from 'src/dto/new-product.dto';
+import { NewProductDto } from 'src/dto/new-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -16,31 +16,29 @@ export class ProductService {
     });
   }
 
-  async createProduct(newProductDto: newProductDto) {
-    const { name, price, CategorieId } = newProductDto;
+  async createProduct(newProductDto: NewProductDto) {
+    const { categorieId, ...rest } = newProductDto;
     return this.prismaService.produit.create({
       data: {
-        name,
-        price,
+        ...rest,
         categorie: {
           connect: {
-            id: CategorieId,
+            id: categorieId,
           },
         },
       },
     });
   }
 
-  async updateProduct(id: number, newproductdto: newProductDto) {
-    const { name, price, CategorieId } = newproductdto;
+  async updateProduct(id: number, newproductdto: NewProductDto) {
+    const { categorieId, ...rest } = newproductdto;
     return this.prismaService.produit.update({
       where: { id },
       data: {
-        name,
-        price,
+        ...rest,
         categorie: {
           connect: {
-            id: CategorieId,
+            id: categorieId,
           },
         },
       },
