@@ -1,8 +1,9 @@
 import { Controller, Get, Param, Delete } from '@nestjs/common';
 import { CommandeProduitService } from './commande-produit.service';
 import { CommandeService } from 'src/commande/commande.service';
-
+import { ApiTags } from '@nestjs/swagger';
 @Controller('commande-produit')
+@ApiTags('commande-produit')
 export class CommandeProduitController {
   constructor(
     private readonly commandeProduitService: CommandeProduitService,

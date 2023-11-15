@@ -9,8 +9,10 @@ import {
 } from '@nestjs/common';
 import { CommandeService } from './commande.service';
 import { CommandeInterface } from './interface/commande.interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('commande')
+@ApiTags('commande')
 export class CommandeController {
   constructor(private readonly commandeService: CommandeService) {}
 

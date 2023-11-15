@@ -9,8 +9,9 @@ import {
 } from '@nestjs/common';
 import { PanierItemService } from './panier-item.service';
 import { RequestAddProductDto } from 'src/panier-item/dto/request-add-product.dto';
-
+import { ApiTags } from '@nestjs/swagger';
 @Controller('panier-item')
+@ApiTags('panier-item')
 export class PanierItemController {
   constructor(private readonly panierItemService: PanierItemService) {}
 
