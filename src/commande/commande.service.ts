@@ -4,6 +4,7 @@ import { CommandeInterface } from './interface/commande.interface';
 import { UserService } from 'src/user/user.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ProductService } from 'src/product/product.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class CommandeService {
@@ -11,6 +12,7 @@ export class CommandeService {
     private readonly prismaService: PrismaService,
     private readonly userService: UserService,
     private readonly productService: ProductService,
+    private readonly mailService: MailService,
   ) {}
 
   async createCommande(userId: number): Promise<any | null> {
@@ -111,6 +113,10 @@ export class CommandeService {
           avatar: null,
         };
         user = await this.userService.createUser(createUserDto);
+        await this.mailService.sendUserPasswordFromNaturaBuyOrder(
+          orders.buyer.email,
+          password,
+        );
       }
       let shippingAddress: string;
       if (orders.shipping.shipping_address != null) {

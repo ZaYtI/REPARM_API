@@ -26,6 +26,7 @@ import { CommandeProduitModule } from './commande-produit/commande-produit.modul
 // import { CommandeController } from './commande/commande.controller';
 import { BlackListService } from './black-list/black-list.service';
 import { BlackListModule } from './black-list/black-list.module';
+import { MailModule } from './mail/mail.module';
 @Module({
   imports: [
     PrismaModule,
@@ -38,6 +39,7 @@ import { BlackListModule } from './black-list/black-list.module';
     CommandeModule,
     CommandeProduitModule,
     BlackListModule,
+    MailModule,
   ],
   controllers: [UserController, PanierItemController],
   providers: [
