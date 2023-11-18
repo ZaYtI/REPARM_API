@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { MailController } from './mail.controller';
 
 @Module({
   imports: [
@@ -27,7 +26,6 @@ import { MailController } from './mail.controller';
       },
     }),
   ],
-  controllers: [MailController],
   providers: [MailService],
   exports: [MailService],
 })

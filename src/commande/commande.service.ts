@@ -89,81 +89,78 @@ export class CommandeService {
 
   async createCommandeFromNaturabuy(naturabuyResponse: any): Promise<any[]> {
     const commandes = [];
-    for (const orders of naturabuyResponse) {
-      console.log(orders.buyer.email);
-      let user = await this.userService.findOneByEmail({
-        email: orders.buyer.email,
-      });
+
+    for (const order of naturabuyResponse) {
+      const { buyer, shipping, items, state, payment, received } = order;
+      let user = await this.userService.findOneByEmail({ email: buyer.email });
+
       if (!user) {
-        const formattedBirthDate = new Date(orders.buyer.birthdate);
+        const formattedBirthDate = new Date(buyer.birthdate);
         const password = await this.userService.generateRandomPassword();
+
         const createUserDto: CreateUserDto = {
           postalCode: '',
-          nick: orders.buyer.nick,
-          civility: orders.buyer.civilite,
-          firstName: orders.buyer.firstName,
-          lastName: orders.buyer.lastName,
+          nick: buyer.nick,
+          civility: buyer.civilite,
+          firstName: buyer.firstName,
+          lastName: buyer.lastName,
           birthDate: formattedBirthDate,
-          address: orders.buyer.address,
-          city: orders.buyer.city,
-          country: orders.buyer.country,
-          phone: orders.buyer.phone,
-          email: orders.buyer.email,
+          address: buyer.address,
+          city: buyer.city,
+          country: buyer.country,
+          phone: buyer.phone,
+          email: buyer.email,
           password: password,
           avatar: null,
         };
+
         user = await this.userService.createUser(createUserDto);
         await this.mailService.sendUserPasswordFromNaturaBuyOrder(
-          orders.buyer.email,
+          buyer.email,
           password,
         );
       }
-      let shippingAddress: string;
-      if (orders.shipping.shipping_address != null) {
-        shippingAddress = orders.shipping.shipping_address.address;
-      } else {
-        shippingAddress = orders.shipping.relay_point_address.address1;
-      }
-      const trackingUrl = orders.trackingUrl ? orders.trackingUrl : '';
+
+      const shippingAddress =
+        shipping.shipping_address?.address ||
+        shipping.relay_point_address?.address1 ||
+        '';
+      const trackingUrl = shipping.tracking_url || '';
+
       const commande = await this.prismaService.commande.create({
         data: {
-          user: {
-            connect: {
-              id: user.id,
-            },
-          },
-          shippingMethod: orders.shipping.name,
-          shippingAddress: shippingAddress,
-          trackingUrl: trackingUrl,
-          state: orders.state,
-          payment: orders.payment.done,
+          user: { connect: { id: user.id } },
+          shippingMethod: shipping.name,
+          shippingAddress,
+          trackingUrl,
+          state,
+          payment: payment.done,
+          received,
+          isNaturaBuyOrder: true,
         },
       });
+
       commandes.push(commande);
-      for (const products of orders.items) {
+
+      for (const product of items) {
         const selectedProduct =
-          await this.productService.getProductByNaturabuyId(products.id);
+          await this.productService.getProductByNaturabuyId(product.id);
+
         await this.prismaService.commandeProduit.create({
           data: {
-            quantity: products.quantity,
-            produit: {
-              connect: {
-                id: selectedProduct.id,
-              },
-            },
-            commande: {
-              connect: {
-                id: commande.id,
-              },
-            },
+            quantity: product.quantity,
+            produit: { connect: { id: selectedProduct.id } },
+            commande: { connect: { id: commande.id } },
           },
         });
+
         await this.productService.updateProductQuantity(
           selectedProduct.id,
-          selectedProduct.quantity - products.quantity,
+          selectedProduct.quantity - product.quantity,
         );
       }
     }
+
     return commandes;
   }
 }

@@ -51,8 +51,9 @@ export class CommandeController {
         period: 'month',
       };
       const response = await axios.get(apiUrl, { params });
-      await this.commandeService.createCommandeFromNaturabuy(response.data);
-      return response.data;
+      return await this.commandeService.createCommandeFromNaturabuy(
+        response.data,
+      );
     } catch (e) {
       console.log(e);
     }
