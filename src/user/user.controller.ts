@@ -4,16 +4,12 @@ import {
   Get,
   Param,
   Post,
-  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '@prisma/client';
 import { response } from 'express';
-import { Role } from 'src/role/role.enum';
-import { Roles } from 'src/role/roles.decorator';
-import { RolesGuard } from 'src/role/roles.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
@@ -27,8 +23,6 @@ export class UserController {
   }
 
   @Get('/all')
-  @Roles(Role.Admin)
-  @UseGuards(RolesGuard)
   async getAllUsers() {
     try {
       return this.userService.findAll({});

@@ -26,7 +26,7 @@ export class CommandeProduitService {
 
   async deleteProductFromCommande(id_commande: number, id_produit: number) {
     const commande = this.commandeService.getCommandeById(id_commande);
-    if ((await commande).isValidate == true) {
+    if ((await commande).payment == true) {
       return null;
     }
     if (commande == null) {

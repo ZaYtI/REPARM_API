@@ -16,18 +16,23 @@ export class AuthMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     const token = this.extractTokenFromHeader(req);
+
     if (!token) {
       throw new UnauthorizedException();
     }
-    const isBlackListed = await this.blackListService.findToken(token);
-    if (isBlackListed) {
-      throw new UnauthorizedException();
-    }
+
     try {
       const payload = await this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
       });
+
+      const isBlackListed = await this.blackListService.findToken(token);
+
+      if (isBlackListed) {
+        throw new UnauthorizedException();
+      }
       req['user'] = payload;
+
       next();
     } catch (error) {
       throw new UnauthorizedException();

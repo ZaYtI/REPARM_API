@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { AddProductDto } from 'src/panier-item/dto/add-product.dto';
+import { PanierService } from 'src/panier/panier.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ProductService } from 'src/product/product.service';
 
 @Injectable()
 export class PanierItemService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly panierService: PanierService,
+    private readonly produitService: ProductService,
+  ) {}
 
   async addProductToPanier(addProductDto: AddProductDto): Promise<any | null> {
     const { ...data } = addProductDto;
@@ -13,7 +19,14 @@ export class PanierItemService {
         ...data,
       },
     });
-
+    const produit = await this.produitService.getProductById(
+      addProductDto.produitId,
+    );
+    await this.panierService.updatePrice(
+      produit.price,
+      addProductDto.quantity,
+      addProductDto.panierId,
+    );
     return panierProduit;
   }
 
@@ -89,42 +102,6 @@ export class PanierItemService {
       },
       data: {
         quantity,
-      },
-    });
-    return panierProduit;
-  }
-
-  async incrementProductQuantity(
-    produitId: number,
-    panierId: number,
-  ): Promise<any> {
-    const panierProduit = await this.prismaService.panierProduit.updateMany({
-      where: {
-        produitId,
-        panierId,
-      },
-      data: {
-        quantity: {
-          increment: 1,
-        },
-      },
-    });
-    return panierProduit;
-  }
-
-  async decrementProductQuantity(
-    produitId: number,
-    panierId: number,
-  ): Promise<any> {
-    const panierProduit = await this.prismaService.panierProduit.updateMany({
-      where: {
-        produitId,
-        panierId,
-      },
-      data: {
-        quantity: {
-          decrement: 1,
-        },
       },
     });
     return panierProduit;

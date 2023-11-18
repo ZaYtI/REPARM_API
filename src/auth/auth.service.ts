@@ -136,6 +136,11 @@ export class AuthService {
     }
   }
 
+  async findByIdUser(id: number) {
+    const user = await this.userService.findOneById(id);
+    return user;
+  }
+
   async deleteExpiredRefreshTokens() {
     const auths = await this.prismaService.auth.findMany();
     const now = Date.now();

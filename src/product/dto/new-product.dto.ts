@@ -2,7 +2,7 @@ import { IsString, IsNumber, IsNotEmpty, IsBoolean } from 'class-validator';
 export class NewProductDto {
   @IsNotEmpty()
   @IsNumber()
-  naturaBuyId: number;
+  naturaBuyId: string;
   @IsString()
   @IsNotEmpty()
   name: string;

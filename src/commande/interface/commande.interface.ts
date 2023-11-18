@@ -1,7 +1,7 @@
 export interface CommandeInterface {
   id: number;
   userId: number;
-  isValidate: boolean;
+  payment: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

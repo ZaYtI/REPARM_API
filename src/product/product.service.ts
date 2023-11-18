@@ -68,4 +68,19 @@ export class ProductService {
     fs.writeFileSync(filePath, csv);
     return filePath;
   }
+
+  async updateProductQuantity(id: number, quantity: number) {
+    return this.prismaService.produit.update({
+      where: { id },
+      data: {
+        quantity,
+      },
+    });
+  }
+
+  async getProductByNaturabuyId(naturaBuyId: string) {
+    return this.prismaService.produit.findUnique({
+      where: { naturaBuyId },
+    });
+  }
 }

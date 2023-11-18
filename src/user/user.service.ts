@@ -16,6 +16,14 @@ export class UserService {
     });
   }
 
+  async findOneById(id: number): Promise<User | null> {
+    return this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
   async findAll(params: {
     skip?: number;
     take?: number;
@@ -46,6 +54,7 @@ export class UserService {
 
   async findOneByEmail(params: { email: string }): Promise<any> {
     const { email } = params;
+    console.log(email);
     return this.prismaService.user.findUnique({
       where: { email },
       select: {

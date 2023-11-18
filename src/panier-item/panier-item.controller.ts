@@ -33,11 +33,6 @@ export class PanierItemController {
     return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
   }
 
-  @Get('price')
-  async getPriceFromPanier(@Request() req: any): Promise<any> {
-    return this.panierItemService.getPriceFromPanier(req.user.panierId);
-  }
-
   @Delete()
   async deleteProductToPanier(@Body() produit: any, @Request() req: any) {
     const produitId = produit.produitId;
@@ -59,32 +54,6 @@ export class PanierItemController {
       produitId,
       req.user.panierId,
       quantity,
-    );
-    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
-  }
-
-  @Post('increment')
-  async incrementProductQuantity(
-    @Body() produit: any,
-    @Request() req: any,
-  ): Promise<any> {
-    const produitId = produit.produitId;
-    await this.panierItemService.incrementProductQuantity(
-      produitId,
-      req.user.panierId,
-    );
-    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
-  }
-
-  @Post('decrement')
-  async decrementProductQuantity(
-    @Body() produit: any,
-    @Request() req: any,
-  ): Promise<any> {
-    const produitId = produit.produitId;
-    await this.panierItemService.decrementProductQuantity(
-      produitId,
-      req.user.panierId,
     );
     return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
   }

@@ -27,4 +27,20 @@ export class PanierService {
       });
     }
   }
+
+  async updatePrice(
+    product: any,
+    quantity: number,
+    panierId: number,
+  ): Promise<any> {
+    const updatedPrice = await this.prismaService.panier.update({
+      where: {
+        id: panierId,
+      },
+      data: {
+        price: product.price * quantity,
+      },
+    });
+    return updatedPrice;
+  }
 }

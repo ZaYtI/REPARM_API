@@ -4,15 +4,17 @@ import {
   Param,
   Request,
   Delete,
-  Put,
   Post,
+  Injectable,
 } from '@nestjs/common';
 import { CommandeService } from './commande.service';
 import { CommandeInterface } from './interface/commande.interface';
 import { ApiTags } from '@nestjs/swagger';
+import axios from 'axios';
 
 @Controller('commande')
 @ApiTags('commande')
+@Injectable()
 export class CommandeController {
   constructor(private readonly commandeService: CommandeService) {}
 
@@ -32,16 +34,27 @@ export class CommandeController {
     return this.commandeService.deleteCommande(id);
   }
 
-  @Put('validate/:id')
-  async updateValidationCommande(
-    @Param('id') id: number,
-    @Request() req: any,
-  ): Promise<CommandeInterface> {
-    return this.commandeService.updateValidationCommande(id, req.user.id);
-  }
-
   @Post('create')
   async createCommande(@Request() req: any): Promise<CommandeInterface> {
     return this.commandeService.createCommande(req.user.id);
+  }
+
+  @Get('naturabuyOrder')
+  async getNaturabuyOrder(): Promise<any> {
+    try {
+      const apiUrl = 'https://api.naturabuy.fr/v5/user/orders';
+      const token = process.env.NATURABUY_TOKEN;
+      const action = 'getOrders';
+      const params = {
+        action: action,
+        token: token,
+        period: 'month',
+      };
+      const response = await axios.get(apiUrl, { params });
+      await this.commandeService.createCommandeFromNaturabuy(response.data);
+      return response.data;
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

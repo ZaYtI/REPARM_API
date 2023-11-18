@@ -40,6 +40,7 @@ CREATE TABLE "Categorie" (
 CREATE TABLE "Panier" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "userId" INTEGER NOT NULL,
+    "price" INTEGER NOT NULL DEFAULT 0,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "Panier_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -66,7 +67,7 @@ CREATE TABLE "Image" (
 -- CreateTable
 CREATE TABLE "Produit" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "naturaBuyId" INTEGER NOT NULL,
+    "naturaBuyId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "price" REAL NOT NULL,
     "barrePrice" REAL NOT NULL,
@@ -97,7 +98,13 @@ CREATE TABLE "Commande" (
     "userId" INTEGER NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "IsValidate" BOOLEAN NOT NULL DEFAULT false,
+    "payment" BOOLEAN NOT NULL DEFAULT false,
+    "state" TEXT NOT NULL DEFAULT '0',
+    "shippingMethod" TEXT NOT NULL,
+    "shippingAddress" TEXT NOT NULL,
+    "trackingUrl" TEXT NOT NULL,
+    "received" BOOLEAN NOT NULL DEFAULT false,
+    "isNaturaBuyOrder" BOOLEAN NOT NULL DEFAULT false,
     CONSTRAINT "Commande_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 

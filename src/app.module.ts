@@ -4,8 +4,6 @@ import {
   NestModule,
   ValidationPipe,
 } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
 import { UserService } from './user/user.service';
 import { UserController } from './user/user.controller';
@@ -25,7 +23,7 @@ import { CronService } from './cron/cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CommandeModule } from './commande/commande.module';
 import { CommandeProduitModule } from './commande-produit/commande-produit.module';
-import { CommandeController } from './commande/commande.controller';
+// import { CommandeController } from './commande/commande.controller';
 import { BlackListService } from './black-list/black-list.service';
 import { BlackListModule } from './black-list/black-list.module';
 @Module({
@@ -41,9 +39,8 @@ import { BlackListModule } from './black-list/black-list.module';
     CommandeProduitModule,
     BlackListModule,
   ],
-  controllers: [AppController, UserController, PanierItemController],
+  controllers: [UserController, PanierItemController],
   providers: [
-    AppService,
     PrismaService,
     UserService,
     {
@@ -69,11 +66,6 @@ export class AppModule implements NestModule {
         'auth/login',
         'auth/register',
       )
-      .forRoutes(
-        PanierItemController,
-        UserController,
-        AuthController,
-        CommandeController,
-      );
+      .forRoutes(PanierItemController, UserController, AuthController);
   }
 }

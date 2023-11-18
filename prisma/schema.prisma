@@ -53,6 +53,7 @@ model Categorie {
 model Panier {
   id        Int          @id @default(autoincrement())
   userId    Int          @unique
+  price     Int          @default(0)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   user      User         @relation("user_panier", fields: [userId], references: [id])
@@ -77,7 +78,7 @@ model Image {
 
 model Produit {
   id          Int          @id @default(autoincrement())
-  naturaBuyId Int          @unique
+  naturaBuyId String       @unique
   name        String
   price       Float
   barrePrice  Float
@@ -110,7 +111,13 @@ model Commande {
   userId    Int
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
-  IsValidate Boolean @default(false)
+  payment     Boolean      @default(false)
+  state    String @default("0")
+  shippingMethod String
+  shippingAddress String
+  trackingUrl String
+  received Boolean @default(false)
+  isNaturaBuyOrder Boolean @default(false)
   user      User         @relation(fields: [userId], references: [id])
   produits  CommandeProduit[]
 }
