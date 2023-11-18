@@ -94,6 +94,7 @@ export class CommandeService {
       });
       if (!user) {
         const formattedBirthDate = new Date(orders.buyer.birthdate);
+        const password = await this.userService.generateRandomPassword();
         const createUserDto: CreateUserDto = {
           postalCode: '',
           nick: orders.buyer.nick,
@@ -106,7 +107,7 @@ export class CommandeService {
           country: orders.buyer.country,
           phone: orders.buyer.phone,
           email: orders.buyer.email,
-          password: 'password',
+          password: password,
           avatar: null,
         };
         user = await this.userService.createUser(createUserDto);

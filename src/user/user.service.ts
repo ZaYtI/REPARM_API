@@ -3,6 +3,7 @@ import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import generator from 'generate-password';
 
 @Injectable()
 export class UserService {
@@ -126,5 +127,16 @@ export class UserService {
       return newPanier;
     }
     return panier;
+  }
+
+  async generateRandomPassword(): Promise<string> {
+    const password = generator.generate({
+      length: 10,
+      numbers: true,
+      uppercase: true,
+      lowercase: true,
+      symbols: true,
+    });
+    return password;
   }
 }
