@@ -53,28 +53,11 @@ export class UserService {
     });
   }
 
-  async findOneByEmail(params: { email: string }): Promise<any> {
+  async findOneByEmail(params: { email: string }): Promise<User> {
     const { email } = params;
     console.log(email);
     return this.prismaService.user.findUnique({
       where: { email },
-      select: {
-        id: true,
-        email: true,
-        role: {
-          select: {
-            name: true,
-          },
-        },
-        panier: {
-          select: {
-            id: true,
-          },
-        },
-        password: true,
-        createdAt: true,
-        updatedAt: true,
-      },
     });
   }
 

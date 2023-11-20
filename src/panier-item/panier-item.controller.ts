@@ -8,8 +8,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { PanierItemService } from './panier-item.service';
-import { RequestAddProductDto } from 'src/panier-item/dto/request-add-product.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AddProductDto } from './dto/add-product.dto';
 @Controller('panier-item')
 @ApiTags('panier-item')
 export class PanierItemController {
@@ -17,30 +17,23 @@ export class PanierItemController {
 
   @Post()
   async addProductToPanier(
-    @Body() requestAddProduct: RequestAddProductDto,
+    @Body() addProductDto: AddProductDto,
     @Request() req: any,
   ): Promise<any> {
-    const { ...data } = requestAddProduct;
-    await this.panierItemService.addProductToPanier({
-      ...data,
-      panierId: req.user.panierId,
-    });
-    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
+    await this.panierItemService.addProductToPanier(addProductDto);
+    return this.panierItemService.getAllProductsFromPanierByUserId(req.user.id);
   }
 
   @Get()
   async getAllProductsFromPanier(@Request() req: any): Promise<any> {
-    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
+    return this.panierItemService.getAllProductsFromPanierByUserId(req.user.id);
   }
 
   @Delete()
   async deleteProductToPanier(@Body() produit: any, @Request() req: any) {
-    const produitId = produit.produitId;
-    await this.panierItemService.deleteProductToPanier(
-      produitId,
-      req.user.panierId,
-    );
-    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
+    const produitId = produit.id;
+    await this.panierItemService.deleteProductToPanier(produitId, req.user.id);
+    return this.panierItemService.getAllProductsFromPanierByUserId(req.user.id);
   }
 
   @Put()
@@ -52,9 +45,9 @@ export class PanierItemController {
     const quantity = produit.quantity;
     await this.panierItemService.updateProductQuantity(
       produitId,
-      req.user.panierId,
+      req.user.id,
       quantity,
     );
-    return this.panierItemService.getAllProductsFromPanier(req.user.panierId);
+    return this.panierItemService.getAllProductsFromPanierByUserId(req.user.id);
   }
 }

@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { PanierService } from 'src/panier/panier.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BlackListService } from 'src/black-list/black-list.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -53,8 +54,6 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      panierId: user.panier.id,
-      role: user.role.name,
     };
     const jwtToken = this.jwtService.sign(payload);
     const cryptedJwtToken = await bcrypt.hash(jwtToken, await this.salt);
@@ -76,11 +75,10 @@ export class AuthService {
 
   async register(registerDto: CreateUserDto) {
     const user = await this.userService.createUser(registerDto);
-    const panier = await this.panierService.createPanier(user.id);
+    await this.panierService.createPanier(user.id);
     const payload = {
       sub: user.id,
       email: user.email,
-      panierId: panier.id,
     };
     const jwtToken = this.jwtService.sign(payload);
     const cryptedJwtToken = await bcrypt.hash(jwtToken, await this.salt);
@@ -136,7 +134,7 @@ export class AuthService {
     }
   }
 
-  async findByIdUser(id: number) {
+  async findByIdUser(id: number): Promise<User> {
     const user = await this.userService.findOneById(id);
     return user;
   }

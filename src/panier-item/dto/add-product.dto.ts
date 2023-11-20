@@ -4,7 +4,7 @@ export class AddProductDto {
   @IsNotEmpty()
   produitId: number;
   @IsNotEmpty()
-  panierId: number;
+  userId: number;
   @IsNotEmpty()
   quantity: number;
 }

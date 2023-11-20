@@ -1,9 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { Panier } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PanierService {
   constructor(private readonly prismaService: PrismaService) {}
+
+  async getPanierByUserId(userId: number): Promise<Panier> {
+    return this.prismaService.panier.findUnique({
+      where: {
+        userId,
+      },
+    });
+  }
 
   async createPanier(userId: number): Promise<any | null> {
     const havePanier = await this.prismaService.panier.findFirst({
