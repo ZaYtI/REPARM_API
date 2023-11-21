@@ -122,4 +122,16 @@ export class UserService {
     });
     return password;
   }
+
+  async findRoleUser(userId: number): Promise<any> {
+    const role = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        role: true,
+      },
+    });
+    return role;
+  }
 }

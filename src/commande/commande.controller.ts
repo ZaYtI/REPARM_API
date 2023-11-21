@@ -11,6 +11,7 @@ import { CommandeService } from './commande.service';
 import { CommandeInterface } from './interface/commande.interface';
 import { ApiTags } from '@nestjs/swagger';
 import axios from 'axios';
+import { Roles } from 'src/auth/roles/roles.decorator';
 
 @Controller('commande')
 @ApiTags('commande')
@@ -19,19 +20,28 @@ export class CommandeController {
   constructor(private readonly commandeService: CommandeService) {}
 
   @Get('get/:id')
+  @Roles('admin')
   async getCommandeById(@Param('id') id: number) {
     console.log(id);
     return this.commandeService.getCommandeById(id);
   }
 
   @Get('user')
+  @Roles('user')
   async getCommandeByUserId(@Request() req: any): Promise<CommandeInterface[]> {
     return this.commandeService.getCommandeByUserId(req.user.id);
   }
 
   @Delete('delete/:id')
+  @Roles('admin')
   async deleteCommande(@Param('id') id: number) {
     return this.commandeService.deleteCommande(id);
+  }
+
+  @Delete('/delete')
+  @Roles('user')
+  async deleteCommandeByUserId(@Request() req: any): Promise<any> {
+    return this.commandeService.deleteCommande(req.user.id);
   }
 
   @Post('create')

@@ -6,12 +6,16 @@ import {
 import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { BlackListService } from 'src/black-list/black-list.service';
+import { UserService } from 'src/user/user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(
     private jwtService: JwtService,
     private readonly blackListService: BlackListService,
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
@@ -26,12 +30,19 @@ export class AuthMiddleware implements NestMiddleware {
         secret: process.env.JWT_SECRET,
       });
 
-      const isBlackListed = await this.blackListService.findToken(token);
+      const isBlackListed = !!(await this.blackListService.findToken(token));
 
-      if (isBlackListed) {
+      const isAuth = !!(await this.authService.findByIdUser(payload.sub));
+
+      if (isBlackListed || !isAuth) {
         throw new UnauthorizedException();
+      } else {
+        const role = await this.userService.findRoleUser(payload.sub);
+        payload.role = role;
+        payload.isAuth = isAuth;
+        payload.isBlackListed = isBlackListed;
+        req['user'] = payload;
       }
-      req['user'] = payload;
 
       next();
     } catch (error) {

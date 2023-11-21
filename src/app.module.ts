@@ -16,7 +16,6 @@ import { PanierItemService } from './panier-item/panier-item.service';
 import { PanierItemModule } from './panier-item/panier-item.module';
 import { PanierService } from './panier/panier.service';
 import { PanierModule } from './panier/panier.module';
-import { AuthMiddleware } from './auth/auth.middleware';
 import { ProductModule } from './product/product.module';
 import { AuthController } from './auth/auth.controller';
 import { CronService } from './cron/cron.service';
@@ -27,6 +26,7 @@ import { CommandeProduitModule } from './commande-produit/commande-produit.modul
 import { BlackListService } from './black-list/black-list.service';
 import { BlackListModule } from './black-list/black-list.module';
 import { MailModule } from './mail/mail.module';
+import { AuthMiddleware } from './auth/auth.middleware';
 @Module({
   imports: [
     PrismaModule,
@@ -59,15 +59,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .exclude(
-        'auth/login',
-        'auth/register',
-        'auth/refresh',
-        'product',
-        'product/:id',
-        'auth/login',
-        'auth/register',
-      )
-      .forRoutes(PanierItemController, UserController, AuthController);
+      .exclude('auth/login', 'auth/register', 'product')
+      .forRoutes(AuthController);
   }
 }
