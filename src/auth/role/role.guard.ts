@@ -7,24 +7,35 @@ import { ForbiddenException } from 'src/exception/ForbidenException';
 export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  matchRoles(roles: string[], userRole: string) {
-    return roles.some((role) => role == userRole);
+  matchRoles(allowedRoles: string[], userRole: string) {
+    if (
+      (allowedRoles.includes('admin') || allowedRoles.includes('user')) &&
+      userRole === 'admin'
+    ) {
+      return true;
+    }
+    return allowedRoles.some((role) => userRole?.includes(role));
   }
+
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
-    if (!roles) {
+    const allowedRoles = this.reflector.get<string[]>(
+      'roles',
+      context.getHandler(),
+    );
+    if (!allowedRoles) {
       return true;
     }
+
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    console.log(user);
-    if (this.matchRoles(roles, user.role)) {
+
+    if (this.matchRoles(allowedRoles, user.role)) {
       return true;
     } else {
       throw new ForbiddenException(
-        'Vous ne possedez pas les droits pour cet requetes',
+        'Vous ne possédez pas les droits pour cette requête',
       );
     }
   }

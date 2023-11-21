@@ -1,14 +1,10 @@
-import {
-  Injectable,
-  NestMiddleware,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { BlackListService } from 'src/black-list/black-list.service';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
-
+import { UnauthorizedException } from 'src/exception/UnauthorizedException';
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(
@@ -22,7 +18,7 @@ export class AuthMiddleware implements NestMiddleware {
     const token = this.extractTokenFromHeader(req);
 
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("il n'y a aucun token fournis");
     }
 
     try {
@@ -35,10 +31,11 @@ export class AuthMiddleware implements NestMiddleware {
       const isAuth = !!(await this.authService.findByIdUser(payload.sub));
 
       if (isBlackListed || !isAuth) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException(
+          'ce token a deja était utilisé ou est invalide',
+        );
       } else {
         const role = await this.userService.findRoleUser(payload.sub);
-        console.log(role.role.name);
         payload.role = role.role.name;
         payload.isAuth = isAuth;
         payload.isBlackListed = isBlackListed;
@@ -47,7 +44,7 @@ export class AuthMiddleware implements NestMiddleware {
 
       next();
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('token invalide');
     }
   }
 

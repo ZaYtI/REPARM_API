@@ -6,12 +6,15 @@ import {
   HttpStatus,
   Request,
   Get,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from 'src/auth/dto/login.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
+import { Roles } from './roles/roles.decorator';
+import { RoleGuard } from './role/role.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -37,6 +40,8 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'getProfile' })
+  @Roles('user')
+  @UseGuards(RoleGuard)
   @Get('profile')
   async profile(@Request() req: any) {
     return await this.userService.findOneByEmail({ email: req.body.email });
@@ -44,6 +49,8 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'logout' })
+  @Roles('user')
+  @UseGuards(RoleGuard)
   @Post('logout')
   async logout(@Request() req: any) {
     const user = await this.userService.findOneByEmail({

@@ -59,7 +59,6 @@ export class ProductService {
       .map((p) => `${p.id}|${p.name}|${p.price}|${p.categorieId}`)
       .join('\n');
     const csv = header + rows;
-    console.log(csv);
     const filePath = path.resolve(
       __dirname,
       '../../src/product',

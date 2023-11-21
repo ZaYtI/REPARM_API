@@ -22,7 +22,6 @@ export class CommandeController {
   @Get('get/:id')
   @Roles('admin')
   async getCommandeById(@Param('id') id: number) {
-    console.log(id);
     return this.commandeService.getCommandeById(id);
   }
 
