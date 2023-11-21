@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CommandeInterface } from './interface/commande.interface';
 import { UserService } from 'src/user/user.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ProductService } from 'src/product/product.service';
 import { MailService } from 'src/mail/mail.service';
+import { Commande } from '@prisma/client';
 
 @Injectable()
 export class CommandeService {
@@ -30,19 +30,12 @@ export class CommandeService {
     });
   }
 
-  async getCommandeById(commandeId: number): Promise<CommandeInterface> {
-    const commande = await this.prismaService.commande.findUnique({
+  async getCommandeById(commandeId: number): Promise<Commande> {
+    return await this.prismaService.commande.findUnique({
       where: {
         id: commandeId,
       },
     });
-    return {
-      id: commande.id,
-      userId: commande.userId,
-      payment: commande.payment,
-      createdAt: commande.createdAt,
-      updatedAt: commande.updatedAt,
-    };
   }
 
   async deleteCommande(commandeId: number): Promise<any | null> {
@@ -53,21 +46,14 @@ export class CommandeService {
     });
   }
 
-  async getCommandeByUserId(userId: number): Promise<CommandeInterface[]> {
-    const commandes = await this.prismaService.commande.findMany({
+  async getCommandeByUserId(userId: number): Promise<Commande[]> {
+    return await this.prismaService.commande.findMany({
       where: {
         user: {
           id: userId,
         },
       },
     });
-    return commandes.map((commande) => ({
-      id: commande.id,
-      userId: commande.userId,
-      payment: commande.payment,
-      createdAt: commande.createdAt,
-      updatedAt: commande.updatedAt,
-    }));
   }
 
   async updateValidationCommande(

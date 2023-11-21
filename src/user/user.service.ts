@@ -55,7 +55,6 @@ export class UserService {
 
   async findOneByEmail(params: { email: string }): Promise<User> {
     const { email } = params;
-    console.log(email);
     return this.prismaService.user.findUnique({
       where: { email },
     });

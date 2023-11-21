@@ -38,7 +38,8 @@ export class AuthMiddleware implements NestMiddleware {
         throw new UnauthorizedException();
       } else {
         const role = await this.userService.findRoleUser(payload.sub);
-        payload.role = role;
+        console.log(role.role.name);
+        payload.role = role.role.name;
         payload.isAuth = isAuth;
         payload.isBlackListed = isBlackListed;
         req['user'] = payload;
