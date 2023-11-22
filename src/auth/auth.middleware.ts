@@ -1,10 +1,14 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { BlackListService } from 'src/black-list/black-list.service';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
-import { UnauthorizedException } from 'src/exception/UnauthorizedException';
+
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(
