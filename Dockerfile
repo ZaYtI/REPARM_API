@@ -25,6 +25,7 @@ COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 COPY --chown=node:node --from=build /usr/src/app/.env .env
 COPY --chown=node:node --from=build /usr/src/app/package.json .
 COPY --chown=node:node --from=build /usr/src/app/package-lock.json .
+COPY --chown=node:node --from=build /usr/src/app/prisma ./prisma
 
 # Installation des dépendances de production
 RUN npm install --omit=dev
