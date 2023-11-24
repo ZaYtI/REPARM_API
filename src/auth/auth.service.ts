@@ -98,19 +98,6 @@ export class AuthService {
     };
   }
 
-  async validateToken(token: string) {
-    const payload = this.jwtService.verify(token, {
-      secret: process.env.JWT_SECRET,
-    });
-    const user = await this.userService.findOneByEmail({
-      email: payload.email,
-    });
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    return user;
-  }
-
   async logout(id: number, token: string) {
     const decryptedToken = await bcrypt.hash(token, await this.salt);
     await this.prismaService.auth.delete({
@@ -120,17 +107,6 @@ export class AuthService {
       },
     });
     return { message: 'your logged out' };
-  }
-
-  async verifyToken(token: string) {
-    try {
-      const decoded = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
-      });
-      return decoded;
-    } catch (error) {
-      return null;
-    }
   }
 
   async findByIdUser(id: number): Promise<User> {
