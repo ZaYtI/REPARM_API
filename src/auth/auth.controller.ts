@@ -15,6 +15,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
 import { Roles } from './roles/roles.decorator';
 import { RoleGuard } from './role/role.guard';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -41,10 +42,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'getProfile' })
   @Roles('user')
-  @UseGuards(RoleGuard)
+  @UseGuards(RoleGuard, AuthGuard)
   @Get('profile')
   async profile(@Request() req: any) {
-    return await this.userService.findOneByEmail({ email: req.body.email });
+    console.log(req.user);
+    return await this.userService.findOneByEmail({ email: req.user.email });
   }
 
   @HttpCode(HttpStatus.OK)

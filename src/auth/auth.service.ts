@@ -127,4 +127,16 @@ export class AuthService {
       }
     }
   }
+
+  async isAuth(id: number) {
+    const auth = await this.prismaService.auth.findFirst({
+      where: {
+        userId: id,
+      },
+    });
+    if (!auth) {
+      return false;
+    }
+    return true;
+  }
 }

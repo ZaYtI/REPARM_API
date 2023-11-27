@@ -32,7 +32,7 @@ export class AuthMiddleware implements NestMiddleware {
 
       const isBlackListed = !!(await this.blackListService.findToken(token));
 
-      const isAuth = !!(await this.authService.findByIdUser(payload.sub));
+      const isAuth = await this.authService.isAuth(payload.sub);
 
       if (isBlackListed || !isAuth) {
         throw new UnauthorizedException(
