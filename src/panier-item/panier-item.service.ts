@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Panier } from '@prisma/client';
 import { AddProductDto } from 'src/panier-item/dto/add-product.dto';
 import { PanierService } from 'src/panier/panier.service';
@@ -14,37 +14,66 @@ export class PanierItemService {
   ) {}
 
   async getPanierFromUserId(userId: number): Promise<Panier> {
-    const panier = this.getPanierFromUserId(userId);
+    const panier = this.prismaService.panier.findUnique({
+      where: {
+        userId,
+      },
+    });
     return panier;
   }
 
-  async addProductToPanier(addProductDto: AddProductDto): Promise<any | null> {
-    const panier = await this.panierService.getPanierByUserId(
-      addProductDto.userId,
-    );
-    const panierProduit = await this.prismaService.panierProduit.create({
-      data: {
-        panierId: panier.id,
-        produitId: addProductDto.produitId,
-        quantity: addProductDto.quantity,
-      },
-    });
+  async addProductToPanier(
+    addProductDto: AddProductDto,
+    userId: number,
+  ): Promise<any | null> {
+    const panier = await this.panierService.getPanierByUserId(userId);
     const produit = await this.produitService.getProductById(
       addProductDto.produitId,
     );
-    await this.panierService.updatePrice(produit.price, produit.id, panier.id);
-    return panierProduit;
+    if (produit != null) {
+      const panierProduit = await this.prismaService.panierProduit.create({
+        data: {
+          panierId: panier.id,
+          produitId: addProductDto.produitId,
+          quantity: addProductDto.quantity,
+        },
+      });
+      await this.panierService.updatePrice(
+        produit.price + produit.price * addProductDto.quantity,
+        panier.id,
+      );
+      return panierProduit;
+    } else {
+      throw new NotFoundException('Produit not found');
+    }
   }
 
-  async deleteProductToPanier(produitId: number, userId: number) {
+  async deleteProductToPanier(
+    produitId: any,
+    userId: number,
+  ): Promise<any | null> {
     const panier = await this.getPanierFromUserId(userId);
-    const panierProduit = await this.prismaService.panierProduit.deleteMany({
+    const panierProduit = await this.prismaService.panierProduit.findMany({
       where: {
-        produitId,
         panierId: panier.id,
       },
     });
-    return panierProduit;
+    let deleted = 0;
+    for (const prod of panierProduit) {
+      if (
+        prod.produitId == produitId.produitId &&
+        deleted < produitId.quantity
+      ) {
+        deleted++;
+        await this.prismaService.panierProduit.delete({
+          where: {
+            id: prod.id,
+            panierId: panier.id,
+          },
+        });
+      }
+    }
+    return await this.getAllProductsFromPanierByUserId(userId);
   }
 
   async getAllProductsFromPanierByUserId(

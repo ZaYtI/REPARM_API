@@ -30,7 +30,7 @@ export class AuthMiddleware implements NestMiddleware {
         secret: process.env.JWT_SECRET,
       });
 
-      const isBlackListed = !!(await this.blackListService.findToken(token));
+      const isBlackListed = await this.blackListService.isBlackListed(token);
 
       const isAuth = await this.authService.isAuth(payload.sub);
 

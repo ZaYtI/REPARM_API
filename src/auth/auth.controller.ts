@@ -45,7 +45,6 @@ export class AuthController {
   @UseGuards(RoleGuard, AuthGuard)
   @Get('profile')
   async profile(@Request() req: any) {
-    console.log(req.user);
     return await this.userService.findOneByEmail({ email: req.user.email });
   }
 

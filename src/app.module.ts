@@ -60,6 +60,6 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude('auth/login', 'auth/register', 'product')
-      .forRoutes(AuthController, UserController);
+      .forRoutes(AuthController, UserController, PanierItemController);
   }
 }

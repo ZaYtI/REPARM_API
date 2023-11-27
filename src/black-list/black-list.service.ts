@@ -35,4 +35,17 @@ export class BlackListService {
       return false;
     }
   }
+
+  async isBlackListed(token: string): Promise<boolean> {
+    const result = await this.prismaService.blackList.findFirst({
+      where: {
+        token: token,
+      },
+    });
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

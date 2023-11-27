@@ -72,7 +72,7 @@ export class CommandeController {
         response.data,
       );
     } catch (e) {
-      console.log(e);
+      throw new Error(e);
     }
   }
 }
