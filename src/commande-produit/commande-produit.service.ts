@@ -27,24 +27,33 @@ export class CommandeProduitService {
     });
     if (commande == null) {
       throw new NotFoundException('Commande not found');
-    } else if (commande.userId != user.id) {
-      throw new UnauthorizedException(
-        "Vous ne possedez pas les droits ou vous n'etes pas proprietaire de cet commande",
-      );
-    } else {
-      return this.prismaService.commandeProduit.findMany({
-        where: {
-          commande: {
-            id: id_commande,
+    }
+    if (req.user.role != 'admin') {
+      if (commande.userId != user.id) {
+        throw new UnauthorizedException(
+          "Vous ne possedez pas les droits ou vous n'etes pas proprietaire de cet commande",
+        );
+      }
+    }
+    return this.prismaService.commandeProduit.findMany({
+      where: {
+        commande: {
+          id: id_commande,
+        },
+      },
+      select: {
+        produit: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            price: true,
           },
         },
-        select: {
-          produit: true,
-          quantity: true,
-          commandeId: true,
-        },
-      });
-    }
+        quantity: true,
+        commandeId: true,
+      },
+    });
   }
 
   async deleteProductFromCommande(
@@ -64,7 +73,7 @@ export class CommandeProduitService {
     const user = await this.userService.findOneByEmail({
       email: req.user.email,
     });
-    if (commande.userId != user.id) {
+    if (commande.userId != user.id || req.user.role != 'admin') {
       throw new UnauthorizedException(
         "Vous n'êtes pas propriétaire de cette commande",
       );

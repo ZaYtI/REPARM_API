@@ -26,7 +26,7 @@ export class CommandeProduitController {
     @Param('id') id: number,
     @Request() req: Request & { user: any },
   ) {
-    return this.commandeProduitService.getProduitFromCommande(id, req);
+    return this.commandeProduitService.getProduitFromCommande(Number(id), req);
   }
 
   @Delete('/delete/:id_commande/:id_produit')
