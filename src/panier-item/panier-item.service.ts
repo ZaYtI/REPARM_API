@@ -128,22 +128,4 @@ export class PanierItemService {
 
     return price;
   }
-
-  async updateProductQuantity(
-    produitId: number,
-    userId: number,
-    quantity: number,
-  ): Promise<any> {
-    const panier = await this.getPanierFromUserId(userId);
-    const panierProduit = await this.prismaService.panierProduit.updateMany({
-      where: {
-        produitId,
-        panierId: panier.id,
-      },
-      data: {
-        quantity,
-      },
-    });
-    return panierProduit;
-  }
 }
