@@ -4,7 +4,6 @@ import {
   Param,
   Request,
   Delete,
-  Post,
   Injectable,
   UseGuards,
 } from '@nestjs/common';
@@ -25,38 +24,28 @@ export class CommandeController {
 
   @Get('get/:id')
   @Roles('admin')
-  @UseGuards(RoleGuard)
+  @UseGuards(RoleGuard, AuthGuard)
   async getCommandeById(@Param('id') id: number) {
     return this.commandeService.getCommandeById(id);
   }
 
   @Get('user')
   @Roles('user')
-  @UseGuards(RoleGuard)
+  @UseGuards(RoleGuard, AuthGuard)
   async getCommandeByUserId(@Request() req: any): Promise<CommandeInterface[]> {
     return this.commandeService.getCommandeByUserId(req.user.sub);
   }
 
   @Delete('delete/:id')
   @Roles('admin')
-  @UseGuards(RoleGuard)
+  @UseGuards(RoleGuard, AuthGuard)
   async deleteCommande(@Param('id') id: number) {
     return this.commandeService.deleteCommande(id);
   }
 
-  @Delete('/delete')
-  @Roles('user')
-  @UseGuards(RoleGuard)
-  async deleteCommandeByUserId(@Request() req: any): Promise<any> {
-    return this.commandeService.deleteCommande(req.user.sub);
-  }
-
-  @Post('create')
-  async createCommande(@Request() req: any): Promise<CommandeInterface> {
-    return this.commandeService.createCommande(req.user.sub);
-  }
-
   @Get('naturabuyOrder')
+  @Roles('admin')
+  @UseGuards(RoleGuard, AuthGuard)
   async getNaturabuyOrder(): Promise<any> {
     try {
       const apiUrl = 'https://api.naturabuy.fr/v5/user/orders';

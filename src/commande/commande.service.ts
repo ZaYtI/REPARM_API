@@ -39,11 +39,17 @@ export class CommandeService {
   }
 
   async deleteCommande(commandeId: number): Promise<any | null> {
-    return this.prismaService.commande.delete({
+    await this.prismaService.commandeProduit.deleteMany({
+      where: {
+        commandeId: commandeId,
+      },
+    });
+    await this.prismaService.commande.delete({
       where: {
         id: commandeId,
       },
     });
+    return { message: 'Commande deleted' };
   }
 
   async getCommandeByUserId(userId: number): Promise<Commande[]> {

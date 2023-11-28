@@ -99,6 +99,26 @@ export class CommandeProduitService {
     }
   }
 
+  async deleteCommandeFromCommandeId(id_commande: number) {
+    const commande = await this.commandeService.getCommandeById(id_commande);
+    if (commande == null) {
+      throw new NotFoundException('Commande not found');
+    }
+    if (commande.payment == true) {
+      throw new UnauthorizedException(
+        'Le payment de la commande a déja était effectuer veuillez vous rapprochez du SAV pour retirer ce produit de votre commande ',
+      );
+    }
+    await this.prismaService.commandeProduit.deleteMany({
+      where: {
+        commandeId: id_commande,
+      },
+    });
+    return {
+      message: 'commande succesfully deleted',
+    };
+  }
+
   async createCommandeWithPanier(req: Request & { user: any }) {
     const panierItem =
       await this.panierItemService.getAllProductsFromPanierByUserId(
