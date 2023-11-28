@@ -53,26 +53,40 @@ export class CommandeProduitService {
     req: Request & { user: any },
   ) {
     const commande = await this.commandeService.getCommandeById(id_commande);
+    if (commande == null) {
+      throw new NotFoundException('Commande not found');
+    }
     if (commande.payment == true) {
       throw new UnauthorizedException(
         'Le payment de la commande a déja était effectuer veuillez vous rapprochez du SAV pour retirer ce produit de votre commande ',
       );
     }
-    const user = await this.userService.findOneByEmail(req.user.email);
+    const user = await this.userService.findOneByEmail({
+      email: req.user.email,
+    });
     if (commande.userId != user.id) {
       throw new UnauthorizedException(
-        "Vous ne possedez pas les droits ou vous n'etes pas proprietaire de cet commande",
+        "Vous n'êtes pas propriétaire de cette commande",
       );
     }
-    if (commande == null) {
-      throw new NotFoundException('Commande not found');
+    await this.prismaService.commandeProduit.deleteMany({
+      where: {
+        commandeId: id_commande,
+        produitId: id_produit,
+      },
+    });
+    const productCommande = await this.getProduitFromCommande(id_commande, req);
+    if (productCommande.length == 0) {
+      await this.commandeService.deleteCommande(id_commande);
+      return {
+        message: 'Commande deleted',
+        data: 'Il n y a plus de produit dans cette commande',
+      };
     } else {
-      return this.prismaService.commandeProduit.deleteMany({
-        where: {
-          commandeId: id_commande,
-          produitId: id_produit,
-        },
-      });
+      return {
+        message: 'Product deleted from commande',
+        data: productCommande,
+      };
     }
   }
 

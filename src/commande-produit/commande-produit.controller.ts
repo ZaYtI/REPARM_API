@@ -38,8 +38,8 @@ export class CommandeProduitController {
     @Request() req: Request & { user: any },
   ) {
     return this.commandeProduitService.deleteProductFromCommande(
-      id_commande,
-      id_produit,
+      Number(id_commande),
+      Number(id_produit),
       req,
     );
   }
