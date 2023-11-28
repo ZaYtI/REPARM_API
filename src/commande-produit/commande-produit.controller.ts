@@ -4,7 +4,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  Body,
   Request,
   Post,
 } from '@nestjs/common';
@@ -20,7 +19,7 @@ export class CommandeProduitController {
     private readonly commandeProduitService: CommandeProduitService,
   ) {}
 
-  @Get('get/:id')
+  @Get('/get/:id')
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
   async getProduitFromCommandeId(
@@ -30,25 +29,35 @@ export class CommandeProduitController {
     return this.commandeProduitService.getProduitFromCommande(id, req);
   }
 
-  @Delete('delete/:id_commande')
+  @Delete('/delete/:id_commande/:id_produit')
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
   async deleteProductFromCommandeId(
     @Param('id_commande') id_commande: number,
-    @Body() param: any,
+    @Param('id_produit') id_produit: number,
     @Request() req: Request & { user: any },
   ) {
     return this.commandeProduitService.deleteProductFromCommande(
-      param.id_commande,
-      param.id_produit,
+      id_commande,
+      id_produit,
       req,
     );
   }
 
-  @Post('create')
+  @Post('/create')
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
   async createCommandeWithPanier(@Request() req: Request & { user: any }) {
-    return await this.commandeProduitService.createCommandeWithPanier(req);
+    const commandeProduit =
+      await this.commandeProduitService.createCommandeWithPanier(req);
+    const product = await this.commandeProduitService.getProduitFromCommande(
+      commandeProduit.id,
+      req,
+    );
+    return {
+      message: 'Commande created',
+      commande: commandeProduit,
+      data: product,
+    };
   }
 }

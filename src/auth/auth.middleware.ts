@@ -22,11 +22,13 @@ export class AuthMiddleware implements NestMiddleware {
     const token = this.extractTokenFromHeader(req);
 
     if (!token) {
-      throw new UnauthorizedException("il n'y a aucun token fournis");
+      throw new UnauthorizedException("Il n'y a aucun token fourni");
     }
 
+    let payload;
+
     try {
-      const payload = await this.jwtService.verify(token, {
+      payload = await this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
       });
 
@@ -36,7 +38,7 @@ export class AuthMiddleware implements NestMiddleware {
 
       if (isBlackListed || !isAuth) {
         throw new UnauthorizedException(
-          'ce token a deja était utilisé ou est invalide',
+          'Ce token a déjà été utilisé ou est invalide',
         );
       } else {
         const role = await this.userService.findRoleUser(payload.sub);
@@ -48,7 +50,15 @@ export class AuthMiddleware implements NestMiddleware {
 
       next();
     } catch (error) {
-      throw new UnauthorizedException('token invalide');
+      if (payload) {
+        this.authService.deleteExpiredTokensFromUserId(payload.sub);
+        this.blackListService.addTokenWithUserAndDate(
+          token,
+          payload.sub,
+          payload.exp,
+        );
+      }
+      throw new UnauthorizedException('Token invalide');
     }
   }
 

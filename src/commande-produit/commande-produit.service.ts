@@ -22,10 +22,12 @@ export class CommandeProduitService {
     req: Request & { user: any },
   ) {
     const commande = await this.commandeService.getCommandeById(id_commande);
-    const user = await this.userService.findOneByEmail(req.user.email);
+    const user = await this.userService.findOneByEmail({
+      email: req.user.email,
+    });
     if (commande == null) {
       throw new NotFoundException('Commande not found');
-    } else if (commande.userId != user.id && req.user.role != 'admin') {
+    } else if (commande.userId != user.id) {
       throw new UnauthorizedException(
         "Vous ne possedez pas les droits ou vous n'etes pas proprietaire de cet commande",
       );
@@ -79,17 +81,32 @@ export class CommandeProduitService {
       await this.panierItemService.getAllProductsFromPanierByUserId(
         req.user.sub,
       );
-    if (panierItem.length == 0 || panierItem.length < 2) {
+    if (panierItem.length != 0) {
       const commande = await this.commandeService.createCommande(req.user.sub);
       for (const product of panierItem) {
         await this.prismaService.commandeProduit.create({
           data: {
-            commandeId: commande.id,
-            produitId: product.produitId,
+            produit: {
+              connect: {
+                id: product.id,
+              },
+            },
             quantity: product.quantity,
+            commande: {
+              connect: {
+                id: commande.id,
+              },
+            },
           },
         });
       }
+      await this.panierItemService.deleteAllProductsFromPanierByUserId(
+        req.user.sub,
+      );
+      await this.panierItemService.updatePriceFromUserId(req.user.sub);
+      return commande;
+    } else {
+      throw new NotFoundException('Panier is empty');
     }
   }
 }

@@ -128,6 +128,14 @@ export class AuthService {
     }
   }
 
+  async deleteExpiredTokensFromUserId(id: number) {
+    await this.prismaService.auth.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+  }
+
   async isAuth(id: number) {
     const auth = await this.prismaService.auth.findFirst({
       where: {

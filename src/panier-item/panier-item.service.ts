@@ -128,4 +128,39 @@ export class PanierItemService {
 
     return price;
   }
+
+  async deleteAllProductsFromPanierByUserId(sub: any) {
+    return this.prismaService.panierProduit.deleteMany({
+      where: {
+        panier: {
+          userId: sub,
+        },
+      },
+    });
+  }
+
+  async updatePriceFromUserId(userId: number) {
+    const panier = await this.getPanierFromUserId(userId);
+    const panierProduits = await this.prismaService.panierProduit.findMany({
+      where: {
+        panierId: panier.id,
+      },
+      include: {
+        produit: true,
+      },
+    });
+    let price = 0;
+    for (const panierProduit of panierProduits) {
+      const { produit, quantity } = panierProduit;
+      price += produit.price * quantity;
+    }
+    return this.prismaService.panier.update({
+      where: {
+        id: panier.id,
+      },
+      data: {
+        price,
+      },
+    });
+  }
 }

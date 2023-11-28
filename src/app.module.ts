@@ -27,6 +27,8 @@ import { BlackListService } from './black-list/black-list.service';
 import { BlackListModule } from './black-list/black-list.module';
 import { MailModule } from './mail/mail.module';
 import { AuthMiddleware } from './auth/auth.middleware';
+import { CommandeProduitController } from './commande-produit/commande-produit.controller';
+import { CommandeController } from './commande/commande.controller';
 @Module({
   imports: [
     PrismaModule,
@@ -60,6 +62,12 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude('auth/login', 'auth/register', 'product')
-      .forRoutes(AuthController, UserController, PanierItemController);
+      .forRoutes(
+        AuthController,
+        UserController,
+        PanierItemController,
+        CommandeProduitController,
+        CommandeController,
+      );
   }
 }
