@@ -44,7 +44,7 @@ export class AuthController {
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
   @Get('profile')
-  async profile(@Request() req: any) {
+  async profile(@Request() req: Request & { user: any }) {
     return await this.userService.findOneByEmail({ email: req.user.email });
   }
 
@@ -53,11 +53,11 @@ export class AuthController {
   @Roles('user')
   @UseGuards(RoleGuard)
   @Post('logout')
-  async logout(@Request() req: any) {
+  async logout(@Request() req: Request & { user: any }) {
     const user = await this.userService.findOneByEmail({
       email: req.user.email,
     });
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers['authorization'].split(' ')[1];
 
     return this.authService.logout(user.id, token);
   }
