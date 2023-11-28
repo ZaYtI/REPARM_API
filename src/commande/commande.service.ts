@@ -15,7 +15,7 @@ export class CommandeService {
     private readonly mailService: MailService,
   ) {}
 
-  async createCommande(userId: number): Promise<any | null> {
+  async createCommande(userId: number) {
     return this.prismaService.commande.create({
       data: {
         user: {
@@ -38,7 +38,7 @@ export class CommandeService {
     });
   }
 
-  async deleteCommande(commandeId: number): Promise<any | null> {
+  async deleteCommande(commandeId: number) {
     const commande = await this.prismaService.commande.findUnique({
       where: {
         id: commandeId,
@@ -70,10 +70,7 @@ export class CommandeService {
     });
   }
 
-  async updateValidationCommande(
-    commandeId: number,
-    userId: number,
-  ): Promise<any | null> {
+  async updateValidationCommande(commandeId: number, userId: number) {
     return this.prismaService.commande.update({
       where: {
         id: commandeId,
@@ -87,7 +84,7 @@ export class CommandeService {
     });
   }
 
-  async createCommandeFromNaturabuy(naturabuyResponse: any): Promise<any[]> {
+  async createCommandeFromNaturabuy(naturabuyResponse: any) {
     const commandes = [];
 
     for (const order of naturabuyResponse) {

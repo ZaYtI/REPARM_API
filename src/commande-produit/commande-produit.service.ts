@@ -7,6 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common/exceptions';
 import { PanierItemService } from 'src/panier-item/panier-item.service';
+import { RequestUserInterface } from 'src/auth/interface/requestUser.interface';
 
 @Injectable()
 export class CommandeProduitService {
@@ -59,7 +60,7 @@ export class CommandeProduitService {
   async deleteProductFromCommande(
     id_commande: number,
     id_produit: number,
-    req: Request & { user: any },
+    req: Request & { user: RequestUserInterface },
   ) {
     const commande = await this.commandeService.getCommandeById(id_commande);
     if (commande == null) {
@@ -119,7 +120,9 @@ export class CommandeProduitService {
     };
   }
 
-  async createCommandeWithPanier(req: Request & { user: any }) {
+  async createCommandeWithPanier(
+    req: Request & { user: RequestUserInterface },
+  ) {
     const panierItem =
       await this.panierItemService.getAllProductsFromPanierByUserId(
         req.user.sub,
@@ -131,7 +134,7 @@ export class CommandeProduitService {
           data: {
             produit: {
               connect: {
-                id: product.id,
+                id: product.produit.id,
               },
             },
             quantity: product.quantity,

@@ -8,12 +8,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandeService } from './commande.service';
-import { CommandeInterface } from './interface/commande.interface';
 import { ApiTags } from '@nestjs/swagger';
 import axios from 'axios';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RoleGuard } from 'src/auth/role/role.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { RequestUserInterface } from 'src/auth/interface/requestUser.interface';
 
 @Controller('commande')
 @ApiTags('commande')
@@ -32,7 +32,9 @@ export class CommandeController {
   @Get('user')
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
-  async getCommandeByUserId(@Request() req: any): Promise<CommandeInterface[]> {
+  async getCommandeByUserId(
+    @Request() req: Request & { user: RequestUserInterface },
+  ) {
     return this.commandeService.getCommandeByUserId(req.user.sub);
   }
 
@@ -46,7 +48,7 @@ export class CommandeController {
   @Get('naturabuyOrder')
   @Roles('admin')
   @UseGuards(RoleGuard, AuthGuard)
-  async getNaturabuyOrder(): Promise<any> {
+  async getNaturabuyOrder() {
     try {
       const apiUrl = 'https://api.naturabuy.fr/v5/user/orders';
       const token = process.env.NATURABUY_TOKEN;

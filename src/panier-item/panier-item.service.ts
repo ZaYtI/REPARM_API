@@ -4,6 +4,7 @@ import { AddProductDto } from 'src/panier-item/dto/add-product.dto';
 import { PanierService } from 'src/panier/panier.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductService } from 'src/product/product.service';
+import { productWithQuantityInterface } from './interface/productWithQuantitty.interface';
 
 @Injectable()
 export class PanierItemService {
@@ -22,10 +23,7 @@ export class PanierItemService {
     return panier;
   }
 
-  async addProductToPanier(
-    addProductDto: AddProductDto,
-    userId: number,
-  ): Promise<any | null> {
+  async addProductToPanier(addProductDto: AddProductDto, userId: number) {
     const panier = await this.panierService.getPanierByUserId(userId);
     const produit = await this.produitService.getProductById(
       addProductDto.produitId,
@@ -48,10 +46,7 @@ export class PanierItemService {
     }
   }
 
-  async deleteProductToPanier(
-    produitId: any,
-    userId: number,
-  ): Promise<any | null> {
+  async deleteProductToPanier(produitId: any, userId: number) {
     const panier = await this.getPanierFromUserId(userId);
     const panierProduit = await this.prismaService.panierProduit.findMany({
       where: {
@@ -76,9 +71,7 @@ export class PanierItemService {
     return await this.getAllProductsFromPanierByUserId(userId);
   }
 
-  async getAllProductsFromPanierByUserId(
-    userId: number,
-  ): Promise<any[] | null> {
+  async getAllProductsFromPanierByUserId(userId: number) {
     const panier = await this.getPanierFromUserId(userId);
     const panierProduits = await this.prismaService.panierProduit.findMany({
       where: {
@@ -89,14 +82,16 @@ export class PanierItemService {
       },
     });
 
-    const productsDict: { [key: number]: any } = {};
+    const productsDict: { [key: number]: productWithQuantityInterface } = {};
 
     for (const panierProduit of panierProduits) {
       const { produit, quantity } = panierProduit;
 
       if (!productsDict[produit.id]) {
         productsDict[produit.id] = {
-          ...produit,
+          produit: {
+            ...produit,
+          },
           quantity,
         };
       } else {

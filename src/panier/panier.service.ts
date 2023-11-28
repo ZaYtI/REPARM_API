@@ -37,7 +37,7 @@ export class PanierService {
     }
   }
 
-  async updatePrice(price: number, panierId: number): Promise<any> {
+  async updatePrice(price: number, panierId: number) {
     const updatedPrice = await this.prismaService.panier.update({
       where: {
         id: panierId,

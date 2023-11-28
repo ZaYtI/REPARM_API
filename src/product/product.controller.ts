@@ -14,6 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RoleGuard } from 'src/auth/role/role.guard';
 import { AuthGuard } from 'src/auth//auth.guard';
+import { ProductInterface } from './interface/product.interface';
 
 @Controller('product')
 @ApiTags('product')
@@ -21,12 +22,12 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get('getById/:id')
-  async getProductById(@Param('id') id: number) {
-    return this.productService.getProductById(id);
+  async getProductById(@Param('id') id: number): Promise<ProductInterface> {
+    return this.productService.getProductById(Number(id));
   }
 
   @Get('/getall')
-  async getAllProducts() {
+  async getAllProducts(): Promise<ProductInterface[]> {
     return this.productService.getAllProducts();
   }
 

@@ -48,7 +48,9 @@ export class CommandeProduitController {
   @Post('/create')
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
-  async createCommandeWithPanier(@Request() req: Request & { user: any }) {
+  async createCommandeWithPanier(
+    @Request() req: Request & { user: RequestUserInterface },
+  ) {
     return this.commandeProduitService.createCommandeWithPanier(req);
   }
 }

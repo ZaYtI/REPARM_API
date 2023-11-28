@@ -28,6 +28,7 @@ import { MailModule } from './mail/mail.module';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { CommandeProduitController } from './commande-produit/commande-produit.controller';
 import { CommandeController } from './commande/commande.controller';
+import { ProductController } from './product/product.controller';
 @Module({
   imports: [
     PrismaModule,
@@ -60,13 +61,14 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .exclude('auth/login', 'auth/register', 'product')
+      .exclude('auth/login', 'auth/register', 'product/getall')
       .forRoutes(
         AuthController,
         UserController,
         PanierItemController,
         CommandeProduitController,
         CommandeController,
+        ProductController,
       );
   }
 }

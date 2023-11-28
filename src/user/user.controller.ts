@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
@@ -27,5 +27,12 @@ export class UserController {
     } catch (err) {
       return response.status(err.status).json(err.message);
     }
+  }
+
+  @Delete('delete/:id')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
+  async deleteUsersById(@Param('id') id: number) {
+    return await this.userService.deleteUser(Number(id));
   }
 }

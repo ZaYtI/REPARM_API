@@ -25,7 +25,7 @@ export class PanierItemController {
   async addProductToPanier(
     @Body() addProductDto: AddProductDto,
     @Request() req: Request & { user: RequestUserInterface },
-  ): Promise<any> {
+  ) {
     await this.panierItemService.addProductToPanier(
       addProductDto,
       req.user.sub,
@@ -40,7 +40,7 @@ export class PanierItemController {
   @UseGuards(RoleGuard, AuthGuard)
   async getAllProductsFromPanier(
     @Request() req: Request & { user: RequestUserInterface },
-  ): Promise<any> {
+  ) {
     return this.panierItemService.getAllProductsFromPanierByUserId(
       req.user.sub,
     );
@@ -52,7 +52,7 @@ export class PanierItemController {
   async deleteProductToPanier(
     @Body() produitId: number,
     @Request() req: Request & { user: RequestUserInterface },
-  ): Promise<any> {
+  ) {
     return await this.panierItemService.deleteProductToPanier(
       produitId,
       req.user.sub,

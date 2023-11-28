@@ -5,10 +5,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendUserPasswordFromNaturaBuyOrder(
-    email: string,
-    password: string,
-  ): Promise<any> {
+  async sendUserPasswordFromNaturaBuyOrder(email: string, password: string) {
     return this.mailerService.sendMail({
       to: email,
       subject: 'NaturaBuy - Votre commande',
