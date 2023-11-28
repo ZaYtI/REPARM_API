@@ -9,5 +9,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   imports: [PanierModule, ProductModule, PrismaModule],
   controllers: [PanierItemController],
   providers: [PanierItemService],
+  exports: [PanierItemService],
 })
 export class PanierItemModule {}

@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common/exceptions';
+import { PanierItemService } from 'src/panier-item/panier-item.service';
 
 @Injectable()
 export class CommandeProduitService {
@@ -13,6 +14,7 @@ export class CommandeProduitService {
     private readonly prismaService: PrismaService,
     private readonly commandeService: CommandeService,
     private readonly userService: UserService,
+    private readonly panierItemService: PanierItemService,
   ) {}
 
   async getProduitFromCommande(
@@ -50,7 +52,9 @@ export class CommandeProduitService {
   ) {
     const commande = await this.commandeService.getCommandeById(id_commande);
     if (commande.payment == true) {
-      return null;
+      throw new UnauthorizedException(
+        'Le payment de la commande a déja était effectuer veuillez vous rapprochez du SAV pour retirer ce produit de votre commande ',
+      );
     }
     const user = await this.userService.findOneByEmail(req.user.email);
     if (commande.userId != user.id) {
@@ -67,6 +71,25 @@ export class CommandeProduitService {
           produitId: id_produit,
         },
       });
+    }
+  }
+
+  async createCommandeWithPanier(req: Request & { user: any }) {
+    const panierItem =
+      await this.panierItemService.getAllProductsFromPanierByUserId(
+        req.user.sub,
+      );
+    if (panierItem.length == 0 || panierItem.length < 2) {
+      const commande = await this.commandeService.createCommande(req.user.sub);
+      for (const product of panierItem) {
+        await this.prismaService.commandeProduit.create({
+          data: {
+            commandeId: commande.id,
+            produitId: product.produitId,
+            quantity: product.quantity,
+          },
+        });
+      }
     }
   }
 }

@@ -5,7 +5,6 @@ import {
   Get,
   Post,
   Request,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { PanierItemService } from './panier-item.service';
@@ -55,22 +54,5 @@ export class PanierItemController {
       produitId,
       req.user.sub,
     );
-  }
-
-  @Put()
-  @Roles('user')
-  @UseGuards(RoleGuard, AuthGuard)
-  async updateProductQuantity(
-    @Body() produit: any,
-    @Request() req: any,
-  ): Promise<any> {
-    const produitId = produit.produitId;
-    const quantity = produit.quantity;
-    await this.panierItemService.updateProductQuantity(
-      produitId,
-      req.user.id,
-      quantity,
-    );
-    return this.panierItemService.getAllProductsFromPanierByUserId(req.user.id);
   }
 }
