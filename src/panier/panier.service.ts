@@ -14,7 +14,7 @@ export class PanierService {
     });
   }
 
-  async createPanier(userId: number): Promise<any | null> {
+  async createPanier(userId: number) {
     const havePanier = await this.prismaService.panier.findFirst({
       where: {
         user: {

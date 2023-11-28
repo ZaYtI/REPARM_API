@@ -20,7 +20,7 @@ export class CommandeProduitService {
 
   async getProduitFromCommande(
     id_commande: number,
-    req: Request & { user: any },
+    req: Request & { user: RequestUserInterface },
   ) {
     const commande = await this.commandeService.getCommandeById(id_commande);
     const user = await this.userService.findOneByEmail({

@@ -31,7 +31,7 @@ export class UserService {
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<any[]> {
+  }) {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prismaService.user.findMany({
       skip,
@@ -96,7 +96,7 @@ export class UserService {
     });
   }
 
-  async getUserPanier(userId: number): Promise<any> {
+  async getUserPanier(userId: number) {
     const panier = await this.prismaService.panier.findUnique({
       where: {
         userId,
@@ -124,7 +124,7 @@ export class UserService {
     return password;
   }
 
-  async findRoleUser(userId: number): Promise<any> {
+  async findRoleUser(userId: number) {
     const role = await this.prismaService.user.findUnique({
       where: {
         id: userId,

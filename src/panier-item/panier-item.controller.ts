@@ -14,6 +14,7 @@ import { Roles } from 'src/auth/roles/roles.decorator';
 import { RoleGuard } from 'src/auth/role/role.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RequestUserInterface } from 'src/auth/interface/requestUser.interface';
+import { productWithQuantityRequestInterface } from './interface/productWithQuantityRequest.interface';
 @Controller('panier-item')
 @ApiTags('panier-item')
 export class PanierItemController {
@@ -50,7 +51,7 @@ export class PanierItemController {
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
   async deleteProductToPanier(
-    @Body() produitId: number,
+    @Body() produitId: productWithQuantityRequestInterface,
     @Request() req: Request & { user: RequestUserInterface },
   ) {
     return await this.panierItemService.deleteProductToPanier(

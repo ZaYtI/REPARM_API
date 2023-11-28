@@ -5,6 +5,7 @@ import { PanierService } from 'src/panier/panier.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductService } from 'src/product/product.service';
 import { productWithQuantityInterface } from './interface/productWithQuantitty.interface';
+import { productWithQuantityRequestInterface } from './interface/productWithQuantityRequest.interface';
 
 @Injectable()
 export class PanierItemService {
@@ -46,7 +47,10 @@ export class PanierItemService {
     }
   }
 
-  async deleteProductToPanier(produitId: any, userId: number) {
+  async deleteProductToPanier(
+    produitWithQuantity: productWithQuantityRequestInterface,
+    userId: number,
+  ) {
     const panier = await this.getPanierFromUserId(userId);
     const panierProduit = await this.prismaService.panierProduit.findMany({
       where: {
@@ -56,8 +60,8 @@ export class PanierItemService {
     let deleted = 0;
     for (const prod of panierProduit) {
       if (
-        prod.produitId == produitId.produitId &&
-        deleted < produitId.quantity
+        prod.produitId == produitWithQuantity.produitId &&
+        deleted < produitWithQuantity.quantity
       ) {
         deleted++;
         await this.prismaService.panierProduit.delete({
