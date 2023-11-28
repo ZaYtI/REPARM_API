@@ -13,6 +13,7 @@ import { AddProductDto } from './dto/add-product.dto';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RoleGuard } from 'src/auth/role/role.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { RequestUserInterface } from 'src/auth/interface/requestUser.interface';
 @Controller('panier-item')
 @ApiTags('panier-item')
 export class PanierItemController {
@@ -23,7 +24,7 @@ export class PanierItemController {
   @UseGuards(RoleGuard, AuthGuard)
   async addProductToPanier(
     @Body() addProductDto: AddProductDto,
-    @Request() req: any,
+    @Request() req: Request & { user: RequestUserInterface },
   ): Promise<any> {
     await this.panierItemService.addProductToPanier(
       addProductDto,
@@ -37,7 +38,9 @@ export class PanierItemController {
   @Get()
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
-  async getAllProductsFromPanier(@Request() req: any): Promise<any> {
+  async getAllProductsFromPanier(
+    @Request() req: Request & { user: RequestUserInterface },
+  ): Promise<any> {
     return this.panierItemService.getAllProductsFromPanierByUserId(
       req.user.sub,
     );
@@ -48,7 +51,7 @@ export class PanierItemController {
   @UseGuards(RoleGuard, AuthGuard)
   async deleteProductToPanier(
     @Body() produitId: number,
-    @Request() req: any,
+    @Request() req: Request & { user: RequestUserInterface },
   ): Promise<any> {
     return await this.panierItemService.deleteProductToPanier(
       produitId,

@@ -12,6 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RoleGuard } from 'src/auth/role/role.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { RequestUserInterface } from 'src/auth/interface/requestUser.interface';
 @Controller('commande-produit')
 @ApiTags('commande-produit')
 export class CommandeProduitController {
@@ -24,7 +25,7 @@ export class CommandeProduitController {
   @UseGuards(RoleGuard, AuthGuard)
   async getProduitFromCommandeId(
     @Param('id') id: number,
-    @Request() req: Request & { user: any },
+    @Request() req: Request & { user: RequestUserInterface },
   ) {
     return this.commandeProduitService.getProduitFromCommande(Number(id), req);
   }
@@ -35,7 +36,7 @@ export class CommandeProduitController {
   async deleteProductFromCommandeId(
     @Param('id_commande') id_commande: number,
     @Param('id_produit') id_produit: number,
-    @Request() req: Request & { user: any },
+    @Request() req: Request & { user: RequestUserInterface },
   ) {
     return this.commandeProduitService.deleteProductFromCommande(
       Number(id_commande),

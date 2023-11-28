@@ -16,6 +16,7 @@ import { UserService } from 'src/user/user.service';
 import { Roles } from './roles/roles.decorator';
 import { RoleGuard } from './role/role.guard';
 import { AuthGuard } from './auth.guard';
+import { RequestUserInterface } from './interface/requestUser.interface';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -44,7 +45,8 @@ export class AuthController {
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
   @Get('profile')
-  async profile(@Request() req: Request & { user: any }) {
+  async profile(@Request() req: Request & { user: RequestUserInterface }) {
+    console.log(req.user);
     return await this.userService.findOneByEmail({ email: req.user.email });
   }
 
@@ -53,7 +55,7 @@ export class AuthController {
   @Roles('user')
   @UseGuards(RoleGuard)
   @Post('logout')
-  async logout(@Request() req: Request & { user: any }) {
+  async logout(@Request() req: Request & { user: RequestUserInterface }) {
     const user = await this.userService.findOneByEmail({
       email: req.user.email,
     });
