@@ -48,16 +48,6 @@ export class CommandeProduitController {
   @Roles('user')
   @UseGuards(RoleGuard, AuthGuard)
   async createCommandeWithPanier(@Request() req: Request & { user: any }) {
-    const commandeProduit =
-      await this.commandeProduitService.createCommandeWithPanier(req);
-    const product = await this.commandeProduitService.getProduitFromCommande(
-      commandeProduit.id,
-      req,
-    );
-    return {
-      message: 'Commande created',
-      commande: commandeProduit,
-      data: product,
-    };
+    return this.commandeProduitService.createCommandeWithPanier(req);
   }
 }

@@ -127,7 +127,11 @@ export class CommandeProduitService {
         req.user.sub,
       );
       await this.panierItemService.updatePriceFromUserId(req.user.sub);
-      return commande;
+      return {
+        message: 'Commande created',
+        commande: commande,
+        data: await this.getProduitFromCommande(commande.id, req),
+      };
     } else {
       throw new NotFoundException('Panier is empty');
     }
