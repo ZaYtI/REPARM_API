@@ -39,6 +39,14 @@ export class CommandeService {
   }
 
   async deleteCommande(commandeId: number): Promise<any | null> {
+    const commande = await this.prismaService.commande.findUnique({
+      where: {
+        id: commandeId,
+      },
+    });
+    if (!commande) {
+      return { message: 'Commande not found' };
+    }
     await this.prismaService.commandeProduit.deleteMany({
       where: {
         commandeId: commandeId,

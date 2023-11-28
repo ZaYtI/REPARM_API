@@ -26,7 +26,7 @@ export class CommandeController {
   @Roles('admin')
   @UseGuards(RoleGuard, AuthGuard)
   async getCommandeById(@Param('id') id: number) {
-    return this.commandeService.getCommandeById(id);
+    return this.commandeService.getCommandeById(Number(id));
   }
 
   @Get('user')
@@ -40,7 +40,7 @@ export class CommandeController {
   @Roles('admin')
   @UseGuards(RoleGuard, AuthGuard)
   async deleteCommande(@Param('id') id: number) {
-    return this.commandeService.deleteCommande(id);
+    return this.commandeService.deleteCommande(Number(id));
   }
 
   @Get('naturabuyOrder')
