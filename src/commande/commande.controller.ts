@@ -34,7 +34,7 @@ export class CommandeController {
   @Roles('user')
   @UseGuards(RoleGuard)
   async getCommandeByUserId(@Request() req: any): Promise<CommandeInterface[]> {
-    return this.commandeService.getCommandeByUserId(req.user.id);
+    return this.commandeService.getCommandeByUserId(req.user.sub);
   }
 
   @Delete('delete/:id')
@@ -48,12 +48,12 @@ export class CommandeController {
   @Roles('user')
   @UseGuards(RoleGuard)
   async deleteCommandeByUserId(@Request() req: any): Promise<any> {
-    return this.commandeService.deleteCommande(req.user.id);
+    return this.commandeService.deleteCommande(req.user.sub);
   }
 
   @Post('create')
   async createCommande(@Request() req: any): Promise<CommandeInterface> {
-    return this.commandeService.createCommande(req.user.id);
+    return this.commandeService.createCommande(req.user.sub);
   }
 
   @Get('naturabuyOrder')
