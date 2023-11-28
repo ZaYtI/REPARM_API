@@ -48,4 +48,19 @@ export class BlackListService {
       return false;
     }
   }
+
+  async deleteExpiredRefreshTokens() {
+    const blackList = await this.prismaService.blackList.findMany();
+    const now = Date.now();
+    for (const user of blackList) {
+      if (user.ExpirationToken <= now) {
+        await this.prismaService.blackList.delete({
+          where: {
+            userId: user.userId,
+            id: user.id,
+          },
+        });
+      }
+    }
+  }
 }
